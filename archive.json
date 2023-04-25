@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-04-18T01:17:51.561355+00:00",
+  "timestamp": "2023-04-25T01:20:38.765168+00:00",
   "repo": "cfrg/draft-irtf-cfrg-opaque",
   "labels": [
     {
@@ -8752,6 +8752,22 @@
       "createdAt": "2023-03-26T15:08:26Z",
       "updatedAt": "2023-04-01T23:27:27Z",
       "closedAt": "2023-04-01T23:27:27Z",
+      "comments": []
+    },
+    {
+      "number": 410,
+      "id": "I_kwDOD79ejs5kK1mm",
+      "title": "2 factor authentication",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-opaque/issues/410",
+      "state": "OPEN",
+      "author": "stsch9",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Many applications have the requirement to offer a 2 factor authentication.\r\nWould it be possible to integrate 2 factor authentication directly into the Opache protocol. \r\nA suggestion:\r\nInstead of deriving the per-client seed (the seed used to derive per-client OPRF keys) with\r\n```\r\nseed = Expand(oprf_seed, concat(credential_identifier, \"OprfKey\"), Nok)\r\n```\r\n(see [Section 5.2.2)](https://cfrg.github.io/draft-irtf-cfrg-opaque/draft-irtf-cfrg-opaque.html#section-5.2.2) the server chooses a random seed per client:\r\n```\r\nseed = random(Nok)\r\n```\r\nThe server has a secret key to encrypt the seed and sends the encrypted seed to the client during offline registration, so that the client cannot decrypt the seed. The server does not store the encrypted seed.\r\n\r\nThis means: The client has to know its password and send the encrypted seed to the server to authenticate successfully.\r\n\r\nI am aware that the client has to store the encrypted seed. Also, the encrypted secret must be distributed to all devices of the client. This is not very user friendly.\r\n\r\nFor example, to combine Opache with TOTP authentication, i think TOTP authentication should be performed first, followed by Opache authentication, since the export key and the session key should be known at the end of the authentication process.",
+      "createdAt": "2023-04-24T06:43:05Z",
+      "updatedAt": "2023-04-24T06:43:05Z",
+      "closedAt": null,
       "comments": []
     }
   ],
