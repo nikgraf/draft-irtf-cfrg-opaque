@@ -1257,13 +1257,13 @@ based on 3DH.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
                 <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="auto internal xref">6.2</a>.  <a href="#name-ake-functions" class="internal xref">AKE Functions</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2.2.1">
-                    <p id="section-toc.1-1.6.2.2.2.1.1"><a href="#section-6.2.1" class="auto internal xref">6.2.1</a>.  <a href="#name-clientinit" class="internal xref">ClientInit</a></p>
+                    <p id="section-toc.1-1.6.2.2.2.1.1"><a href="#section-6.2.1" class="auto internal xref">6.2.1</a>.  <a href="#name-generateke1" class="internal xref">GenerateKE1</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2.2.2">
-                    <p id="section-toc.1-1.6.2.2.2.2.1"><a href="#section-6.2.2" class="auto internal xref">6.2.2</a>.  <a href="#name-serverinit" class="internal xref">ServerInit</a></p>
+                    <p id="section-toc.1-1.6.2.2.2.2.1"><a href="#section-6.2.2" class="auto internal xref">6.2.2</a>.  <a href="#name-generateke2" class="internal xref">GenerateKE2</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2.2.3">
-                    <p id="section-toc.1-1.6.2.2.2.3.1"><a href="#section-6.2.3" class="auto internal xref">6.2.3</a>.  <a href="#name-clientfinish" class="internal xref">ClientFinish</a></p>
+                    <p id="section-toc.1-1.6.2.2.2.3.1"><a href="#section-6.2.3" class="auto internal xref">6.2.3</a>.  <a href="#name-generateke3" class="internal xref">GenerateKE3</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2.2.4">
                     <p id="section-toc.1-1.6.2.2.2.4.1"><a href="#section-6.2.4" class="auto internal xref">6.2.4</a>.  <a href="#name-serverfinish" class="internal xref">ServerFinish</a></p>
@@ -1531,13 +1531,15 @@ byte strings in big-endian byte order.<a href="#section-1.2-2.1" class="pilcrow"
 </li>
           <li class="normal" id="section-1.2-2.3">random(n): Generate a cryptographically secure pseudorandom byte string of length <code>n</code> bytes.<a href="#section-1.2-2.3" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-1.2-2.4">xor(a,b): Apply XOR to byte strings. For example, <code>xor(0xF0F0, 0x1234) = 0xE2C4</code>.
-It is an error to call this function with arguments of unequal length.<a href="#section-1.2-2.4" class="pilcrow">¶</a>
+          <li class="normal" id="section-1.2-2.4">zeroes(n): Generate a string of <code>n</code> bytes all equal to 0 (zero).<a href="#section-1.2-2.4" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-1.2-2.5">ct_equal(a, b): Return <code>true</code> if <code>a</code> is equal to <code>b</code>, and false otherwise.
+          <li class="normal" id="section-1.2-2.5">xor(a,b): Apply XOR to byte strings. For example, <code>xor(0xF0F0, 0x1234) = 0xE2C4</code>.
+It is an error to call this function with arguments of unequal length.<a href="#section-1.2-2.5" class="pilcrow">¶</a>
+</li>
+          <li class="normal" id="section-1.2-2.6">ct_equal(a, b): Return <code>true</code> if <code>a</code> is equal to <code>b</code>, and false otherwise.
 The implementation of this function must be constant-time in the length of <code>a</code>
 and <code>b</code>, which are assumed to be of equal length, irrespective of the values <code>a</code>
-or <code>b</code>.<a href="#section-1.2-2.5" class="pilcrow">¶</a>
+or <code>b</code>.<a href="#section-1.2-2.6" class="pilcrow">¶</a>
 </li>
         </ul>
 <p id="section-1.2-3">Except if said otherwise, random choices in this specification refer to
@@ -1664,9 +1666,9 @@ fixed-length digest of size <code>Nh</code> bytes.<a href="#section-2.3-2.1" cla
 <p id="section-2.3-3">This specification makes use of a Key Stretching Function (KSF), which is a slow
 and expensive cryptographic hash function with the following API:<a href="#section-2.3-3" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-2.3-4.1">Stretch(msg, params): Apply a key stretching function with parameters
-<code>params</code> to stretch the input <code>msg</code> and harden it against offline
-dictionary attacks. This function also needs to satisfy collision resistance.<a href="#section-2.3-4.1" class="pilcrow">¶</a>
+<li class="normal" id="section-2.3-4.1">Stretch(msg): Apply a key stretching function to stretch the input <code>msg</code> and
+harden it against offline dictionary attacks. This function also needs to
+satisfy collision resistance.<a href="#section-2.3-4.1" class="pilcrow">¶</a>
 </li>
         </ul>
 </section>
@@ -1704,7 +1706,7 @@ each client).<a href="#section-3.1-1" class="pilcrow">¶</a></p>
 <a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-offline-registration" class="section-name selfRef">Offline Registration</a>
         </h3>
 <p id="section-3.2-1">Registration is the only stage in OPAQUE that requires a server-authenticated
-and confidential channel: either physical, out-of-band, PKI-based, etc.<a href="#section-3.2-1" class="pilcrow">¶</a></p>
+channel with confidentiality and integrity: either physical, out-of-band, PKI-based, etc.<a href="#section-3.2-1" class="pilcrow">¶</a></p>
 <p id="section-3.2-2">The client inputs its credentials, which include its password and user
 identifier, and the server inputs its parameters, which include its private key
 and other information.<a href="#section-3.2-2" class="pilcrow">¶</a></p>
@@ -1898,7 +1900,7 @@ new <code>envelope_nonce</code>, to completion.<a href="#section-4.1.2-1" class=
 Store
 
 Input:
-- randomized_pwd, a randomized password.
+- randomized_password, a randomized password.
 - server_public_key, the encoded server public key for
   the AKE protocol.
 - server_identity, the optional encoded server identity.
@@ -1911,18 +1913,18 @@ Output:
   of defending against client enumeration attacks.
 - export_key, an additional client key.
 
-def Store(randomized_pwd, server_public_key, server_identity, client_identity):
+def Store(randomized_password, server_public_key, server_identity, client_identity):
   envelope_nonce = random(Nn)
-  masking_key = Expand(randomized_pwd, "MaskingKey", Nh)
-  auth_key = Expand(randomized_pwd, concat(envelope_nonce, "AuthKey"), Nh)
-  export_key = Expand(randomized_pwd, concat(envelope_nonce, "ExportKey"), Nh)
-  seed = Expand(randomized_pwd, concat(envelope_nonce, "PrivateKey"), Nseed)
+  masking_key = Expand(randomized_password, "MaskingKey", Nh)
+  auth_key = Expand(randomized_password, concat(envelope_nonce, "AuthKey"), Nh)
+  export_key = Expand(randomized_password, concat(envelope_nonce, "ExportKey"), Nh)
+  seed = Expand(randomized_password, concat(envelope_nonce, "PrivateKey"), Nseed)
   (_, client_public_key) = DeriveAuthKeyPair(seed)
 
-  cleartext_creds =
+  cleartext_credentials =
     CreateCleartextCredentials(server_public_key, client_public_key,
                                server_identity, client_identity)
-  auth_tag = MAC(auth_key, concat(envelope_nonce, cleartext_creds))
+  auth_tag = MAC(auth_key, concat(envelope_nonce, cleartext_credentials))
 
   Create Envelope envelope with (envelope_nonce, auth_tag)
   return (envelope, client_public_key, masking_key, export_key)
@@ -1942,7 +1944,7 @@ defined below.<a href="#section-4.1.3-1" class="pilcrow">¶</a></p>
 Recover
 
 Input:
-- randomized_pwd, a randomized password.
+- randomized_password, a randomized password.
 - server_public_key, the encoded server public key for the AKE protocol.
 - envelope, the client's Envelope structure.
 - server_identity, the optional encoded server identity.
@@ -1950,24 +1952,25 @@ Input:
 
 Output:
 - client_private_key, the encoded client private key for the AKE protocol.
+- cleartext_credentials, a CleartextCredentials structure.
 - export_key, an additional client key.
 
 Exceptions:
 - EnvelopeRecoveryError, the envelope fails to be recovered.
 
-def Recover(randomized_pwd, server_public_key, envelope,
+def Recover(randomized_password, server_public_key, envelope,
             server_identity, client_identity):
-  auth_key = Expand(randomized_pwd, concat(envelope.nonce, "AuthKey"), Nh)
-  export_key = Expand(randomized_pwd, concat(envelope.nonce, "ExportKey"), Nh)
-  seed = Expand(randomized_pwd, concat(envelope.nonce, "PrivateKey"), Nseed)
+  auth_key = Expand(randomized_password, concat(envelope.nonce, "AuthKey"), Nh)
+  export_key = Expand(randomized_password, concat(envelope.nonce, "ExportKey"), Nh)
+  seed = Expand(randomized_password, concat(envelope.nonce, "PrivateKey"), Nseed)
   (client_private_key, client_public_key) = DeriveAuthKeyPair(seed)
 
-  cleartext_creds = CreateCleartextCredentials(server_public_key,
+  cleartext_credentials = CreateCleartextCredentials(server_public_key,
                       client_public_key, server_identity, client_identity)
-  expected_tag = MAC(auth_key, concat(envelope.nonce, cleartext_creds))
+  expected_tag = MAC(auth_key, concat(envelope.nonce, cleartext_credentials))
   If !ct_equal(envelope.auth_tag, expected_tag)
     raise EnvelopeRecoveryError
-  return (client_private_key, export_key)
+  return (client_private_key, cleartext_credentials, export_key)
 </pre><a href="#section-4.1.3-2" class="pilcrow">¶</a>
 </div>
 </section>
@@ -1991,16 +1994,14 @@ the following values:<a href="#section-5-1" class="pilcrow">¶</a></p>
       </ul>
 <p id="section-5-3">The server inputs the following values:<a href="#section-5-3" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-5-4.1">server_private_key: The server private key for the AKE protocol.<a href="#section-5-4.1" class="pilcrow">¶</a>
+<li class="normal" id="section-5-4.1">server_public_key: The server public key for the AKE protocol.<a href="#section-5-4.1" class="pilcrow">¶</a>
 </li>
-        <li class="normal" id="section-5-4.2">server_public_key: The server public key for the AKE protocol.<a href="#section-5-4.2" class="pilcrow">¶</a>
+        <li class="normal" id="section-5-4.2">credential_identifier: A unique identifier for the client's
+credential, generated by the server.<a href="#section-5-4.2" class="pilcrow">¶</a>
 </li>
-        <li class="normal" id="section-5-4.3">credential_identifier: A unique identifier for the client's
-credential, generated by the server.<a href="#section-5-4.3" class="pilcrow">¶</a>
+        <li class="normal" id="section-5-4.3">client_identity: The optional client identity as described in <a href="#client-material" class="auto internal xref">Section 4</a>.<a href="#section-5-4.3" class="pilcrow">¶</a>
 </li>
-        <li class="normal" id="section-5-4.4">client_identity: The optional client identity as described in <a href="#client-material" class="auto internal xref">Section 4</a>.<a href="#section-5-4.4" class="pilcrow">¶</a>
-</li>
-        <li class="normal" id="section-5-4.5">oprf_seed: A seed used to derive per-client OPRF keys.<a href="#section-5-4.5" class="pilcrow">¶</a>
+        <li class="normal" id="section-5-4.4">oprf_seed: A seed used to derive per-client OPRF keys.<a href="#section-5-4.4" class="pilcrow">¶</a>
 </li>
       </ul>
 <p id="section-5-5">The registration protocol then runs as shown below:<a href="#section-5-5" class="pilcrow">¶</a></p>
@@ -2196,11 +2197,11 @@ def FinalizeRegistrationRequest(password, blind, response, server_identity, clie
   evaluated_element = DeserializeElement(response.evaluated_message)
   oprf_output = Finalize(password, blind, evaluated_element)
 
-  stretched_oprf_output = Stretch(oprf_output, params)
-  randomized_pwd = Extract("", concat(oprf_output, stretched_oprf_output))
+  stretched_oprf_output = Stretch(oprf_output)
+  randomized_password = Extract("", concat(oprf_output, stretched_oprf_output))
 
   (envelope, client_public_key, masking_key, export_key) =
-    Store(randomized_pwd, response.server_public_key,
+    Store(randomized_password, response.server_public_key,
           server_identity, client_identity)
   Create RegistrationRecord record with (client_public_key, masking_key, envelope)
   return (record, export_key)
@@ -2264,12 +2265,12 @@ client's.<a href="#section-6-7" class="pilcrow">¶</a></p>
 <pre>
   Client                                         Server
  ------------------------------------------------------
-  ke1 = ClientInit(password)
+  ke1 = GenerateKE1(password)
 
                          ke1
               -------------------------&gt;
 
-  ke2 = ServerInit(server_identity, server_private_key,
+  ke2 = GenerateKE2(server_identity, server_private_key,
                     server_public_key, record,
                     credential_identifier, oprf_seed, ke1)
 
@@ -2278,7 +2279,7 @@ client's.<a href="#section-6-7" class="pilcrow">¶</a></p>
 
     (ke3,
     session_key,
-    export_key) = ClientFinish(client_identity,
+    export_key) = GenerateKE3(client_identity,
                                server_identity, ke2)
 
                          ke3
@@ -2323,12 +2324,12 @@ and <code>AuthResponse</code>.<a href="#section-6.1-1" class="pilcrow">¶</a></p
 <pre>
 struct {
   uint8 client_nonce[Nn];
-  uint8 client_keyshare[Npk];
+  uint8 client_public_keyshare[Npk];
 } AuthRequest;
 </pre><a href="#section-6.1-2" class="pilcrow">¶</a>
 </div>
 <p id="section-6.1-3">client_nonce: A fresh randomly generated nonce of length <code>Nn</code>.<a href="#section-6.1-3" class="pilcrow">¶</a></p>
-<p id="section-6.1-4">client_keyshare: A serialized client ephemeral public key of fixed size <code>Npk</code>.<a href="#section-6.1-4" class="pilcrow">¶</a></p>
+<p id="section-6.1-4">client_public_keyshare: A serialized client ephemeral public key of fixed size <code>Npk</code>.<a href="#section-6.1-4" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-6.1-5">
 <pre>
 struct {
@@ -2343,13 +2344,13 @@ struct {
 <pre>
 struct {
   uint8 server_nonce[Nn];
-  uint8 server_keyshare[Npk];
+  uint8 server_public_keyshare[Npk];
   uint8 server_mac[Nm];
 } AuthResponse;
 </pre><a href="#section-6.1-8" class="pilcrow">¶</a>
 </div>
 <p id="section-6.1-9">server_nonce: A fresh randomly generated nonce of length <code>Nn</code>.<a href="#section-6.1-9" class="pilcrow">¶</a></p>
-<p id="section-6.1-10">server_keyshare: A server ephemeral public key of fixed size <code>Npk</code>, where <code>Npk</code>
+<p id="section-6.1-10">server_public_keyshare: A server ephemeral public key of fixed size <code>Npk</code>, where <code>Npk</code>
 depends on the corresponding prime order group.<a href="#section-6.1-10" class="pilcrow">¶</a></p>
 <p id="section-6.1-11">server_mac: An authentication tag computed over the handshake transcript
 computed using <code>Km2</code>, defined below.<a href="#section-6.1-11" class="pilcrow">¶</a></p>
@@ -2392,16 +2393,16 @@ defined in <a href="#cred-retrieval" class="auto internal xref">Section 6.3</a><
 defined in <a href="#ake-client" class="auto internal xref">Section 6.4.3</a> and <a href="#ake-server" class="auto internal xref">Section 6.4.4</a><a href="#section-6.2-2.2" class="pilcrow">¶</a>
 </li>
         </ul>
-<div id="clientinit">
+<div id="generateke1">
 <section id="section-6.2.1">
-          <h4 id="name-clientinit">
-<a href="#section-6.2.1" class="section-number selfRef">6.2.1. </a><a href="#name-clientinit" class="section-name selfRef">ClientInit</a>
+          <h4 id="name-generateke1">
+<a href="#section-6.2.1" class="section-number selfRef">6.2.1. </a><a href="#name-generateke1" class="section-name selfRef">GenerateKE1</a>
           </h4>
-<p id="section-6.2.1-1">The <code>ClientInit</code> function begins the AKE protocol and produces the client's <code>KE1</code>
+<p id="section-6.2.1-1">The <code>GenerateKE1</code> function begins the AKE protocol and produces the client's <code>KE1</code>
 output for the server.<a href="#section-6.2.1-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-6.2.1-2">
 <pre>
-ClientInit
+GenerateKE1
 
 State:
 - state, a ClientState structure.
@@ -2412,7 +2413,7 @@ Input:
 Output:
 - ke1, a KE1 message structure.
 
-def ClientInit(password):
+def GenerateKE1(password):
   request, blind = CreateCredentialRequest(password)
   state.password = password
   state.blind = blind
@@ -2422,16 +2423,16 @@ def ClientInit(password):
 </div>
 </section>
 </div>
-<div id="serverinit">
+<div id="generateke2">
 <section id="section-6.2.2">
-          <h4 id="name-serverinit">
-<a href="#section-6.2.2" class="section-number selfRef">6.2.2. </a><a href="#name-serverinit" class="section-name selfRef">ServerInit</a>
+          <h4 id="name-generateke2">
+<a href="#section-6.2.2" class="section-number selfRef">6.2.2. </a><a href="#name-generateke2" class="section-name selfRef">GenerateKE2</a>
           </h4>
-<p id="section-6.2.2-1">The <code>ServerInit</code> function continues the AKE protocol by processing the client's <code>KE1</code> message
+<p id="section-6.2.2-1">The <code>GenerateKE2</code> function continues the AKE protocol by processing the client's <code>KE1</code> message
 and producing the server's <code>KE2</code> output.<a href="#section-6.2.2-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-6.2.2-2">
 <pre>
-ServerInit
+GenerateKE2
 
 State:
 - state, a ServerState structure.
@@ -2451,29 +2452,31 @@ Input:
 Output:
 - ke2, a KE2 structure.
 
-def ServerInit(server_identity, server_private_key, server_public_key,
+def GenerateKE2(server_identity, server_private_key, server_public_key,
                record, credential_identifier, oprf_seed, ke1, client_identity):
   credential_response = CreateCredentialResponse(ke1.credential_request, server_public_key, record,
     credential_identifier, oprf_seed)
-  auth_response = AuthServerRespond(server_identity, server_private_key,
-    client_identity, record.client_public_key, ke1, credential_response)
+  cleartext_credentials = CreateCleartextCredentials(server_public_key,
+                      record.client_public_key, server_identity, client_identity)
+  auth_response = AuthServerRespond(cleartext_credentials, server_private_key,
+                      record.client_public_key, ke1, credential_response)
   Create KE2 ke2 with (credential_response, auth_response)
   return ke2
 </pre><a href="#section-6.2.2-2" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
-<div id="clientfinish">
+<div id="generateke3">
 <section id="section-6.2.3">
-          <h4 id="name-clientfinish">
-<a href="#section-6.2.3" class="section-number selfRef">6.2.3. </a><a href="#name-clientfinish" class="section-name selfRef">ClientFinish</a>
+          <h4 id="name-generateke3">
+<a href="#section-6.2.3" class="section-number selfRef">6.2.3. </a><a href="#name-generateke3" class="section-name selfRef">GenerateKE3</a>
           </h4>
-<p id="section-6.2.3-1">The <code>ClientFinish</code> function completes the AKE protocol for the client and
+<p id="section-6.2.3-1">The <code>GenerateKE3</code> function completes the AKE protocol for the client and
 produces the client's <code>KE3</code> output for the server, as well as the <code>session_key</code>
 and <code>export_key</code> outputs from the AKE.<a href="#section-6.2.3-1" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-6.2.3-2">
 <pre>
-ClientFinish
+GenerateKE3
 
 State:
 - state, a ClientState structure.
@@ -2490,13 +2493,12 @@ Output:
 - session_key, the session's shared secret.
 - export_key, an additional client key.
 
-def ClientFinish(client_identity, server_identity, ke2):
-  (client_private_key, server_public_key, export_key) =
+def GenerateKE3(client_identity, server_identity, ke2):
+  (client_private_key, cleartext_credentials, server_public_key, export_key) =
     RecoverCredentials(state.password, state.blind, ke2.credential_response,
                        server_identity, client_identity)
   (ke3, session_key) =
-    AuthClientFinalize(client_identity, client_private_key, server_identity,
-                       server_public_key, ke2)
+    AuthClientFinalize(cleartext_credentials, client_private_key, ke2)
   return (ke3, session_key, export_key)
 </pre><a href="#section-6.2.3-2" class="pilcrow">¶</a>
 </div>
@@ -2710,7 +2712,8 @@ Input:
 - client_identity, The encoded client identity.
 
 Output:
-- client_private_key, the client's private key for the AKE protocol.
+- client_private_key, the encoded client private key for the AKE protocol.
+- cleartext_credentials, a CleartextCredentials structure.
 - server_public_key, the public key of the server.
 - export_key, an additional client key.
 
@@ -2722,20 +2725,20 @@ def RecoverCredentials(password, blind, response,
   evaluated_element = DeserializeElement(response.evaluated_message)
 
   oprf_output = Finalize(password, blind, evaluated_element)
-  stretched_oprf_output = Stretch(oprf_output, params)
-  randomized_pwd = Extract("", concat(oprf_output, stretched_oprf_output))
+  stretched_oprf_output = Stretch(oprf_output)
+  randomized_password = Extract("", concat(oprf_output, stretched_oprf_output))
 
-  masking_key = Expand(randomized_pwd, "MaskingKey", Nh)
+  masking_key = Expand(randomized_password, "MaskingKey", Nh)
   credential_response_pad = Expand(masking_key,
                                    concat(response.masking_nonce, "CredentialResponsePad"),
                                    Npk + Nn + Nm)
   concat(server_public_key, envelope) = xor(credential_response_pad,
                                               response.masked_response)
-  (client_private_key, export_key) =
-    Recover(randomized_pwd, server_public_key, envelope,
+  (client_private_key, cleartext_credentials, export_key) =
+    Recover(randomized_password, server_public_key, envelope,
             server_identity, client_identity)
 
-  return (client_private_key, server_public_key, export_key)
+  return (client_private_key, cleartext_credentials, server_public_key, export_key)
 </pre><a href="#section-6.3.2.3-2" class="pilcrow">¶</a>
 </div>
 </section>
@@ -2920,7 +2923,7 @@ Input:
   to server_public_key if not specified.
 - credential_response, the corresponding field on the KE2 structure.
 - server_nonce, the corresponding field on the AuthResponse structure.
-- server_keyshare, the corresponding field on the AuthResponse structure.
+- server_public_keyshare, the corresponding field on the AuthResponse structure.
 
 Output:
 - preamble, the protocol transcript with identities and messages.
@@ -2933,7 +2936,7 @@ def Preamble(client_identity, ke1, server_identity, ke2):
                      I2OSP(len(server_identity), 2), server_identity,
                      credential_response,
                      server_nonce,
-                     server_keyshare)
+                     server_public_keyshare)
   return preamble
 </pre><a href="#section-6.4.2.1-8" class="pilcrow">¶</a>
 </div>
@@ -2997,8 +3000,8 @@ Output:
 
 def AuthClientStart(credential_request):
   client_nonce = random(Nn)
-  (client_secret, client_keyshare) = GenerateAuthKeyPair()
-  Create AuthRequest auth_request with (client_nonce, client_keyshare)
+  (client_secret, client_public_keyshare) = GenerateAuthKeyPair()
+  Create AuthRequest auth_request with (client_nonce, client_public_keyshare)
   Create KE1 ke1 with (credential_request, auth_request)
   state.client_secret = client_secret
   state.ke1 = ke1
@@ -3016,12 +3019,8 @@ State:
 - state, a ClientAkeState structure.
 
 Input:
-- client_identity, the optional encoded client identity, which is
-  set to client_public_key if not specified.
+- cleartext_credentials, a CleartextCredentials structure.
 - client_private_key, the client's private key.
-- server_identity, the optional encoded server identity, which is
-  set to server_public_key if not specified.
-- server_public_key, the server's public key.
 - ke2, a KE2 message structure.
 
 Output:
@@ -3031,20 +3030,19 @@ Output:
 Exceptions:
 - ServerAuthenticationError, the handshake fails.
 
-def AuthClientFinalize(client_identity, client_private_key, server_identity,
-                       server_public_key, ke2):
+def AuthClientFinalize(cleartext_credentials, client_private_key, ke2):
 
-  dh1 = SerializeElement(DiffieHellman(state.client_secret, ke2.auth_response.server_keyshare))
-  dh2 = SerializeElement(DiffieHellman(state.client_secret, server_public_key))
-  dh3 = SerializeElement(DiffieHellman(client_private_key, ke2.auth_response.server_keyshare))
+  dh1 = SerializeElement(DiffieHellman(state.client_secret, ke2.auth_response.server_public_keyshare))
+  dh2 = SerializeElement(DiffieHellman(state.client_secret, cleartext_credentials.server_public_key))
+  dh3 = SerializeElement(DiffieHellman(client_private_key, ke2.auth_response.server_public_keyshare))
   ikm = concat(dh1, dh2, dh3)
 
-  preamble = Preamble(client_identity,
+  preamble = Preamble(cleartext_credentials.client_identity,
                       state.ke1,
-                      server_identity,
+                      cleartext_credentials.server_identity,
                       ke2.credential_response,
                       ke2.auth_response.server_nonce,
-                      ke2.auth_response.server_keyshare)
+                      ke2.auth_response.server_public_keyshare)
   Km2, Km3, session_key = DeriveKeys(ikm, preamble)
   expected_server_mac = MAC(Km2, Hash(preamble))
   if !ct_equal(ke2.server_mac, expected_server_mac),
@@ -3074,30 +3072,26 @@ State:
 - state, a ServerAkeState structure.
 
 Input:
-- server_identity, the optional encoded server identity, which is set to
-  server_public_key if not specified.
+- cleartext_credentials, a CleartextCredentials structure.
 - server_private_key, the server's private key.
-- client_identity, the optional encoded client identity, which is set to
-  client_public_key if not specified.
 - client_public_key, the client's public key.
 - ke1, a KE1 message structure.
 
 Output:
 - auth_response, an AuthResponse structure.
 
-def AuthServerRespond(server_identity, server_private_key, client_identity,
-                      client_public_key, ke1, credential_response):
+def AuthServerRespond(cleartext_credentials, server_private_key, client_public_key, ke1, credential_response):
   server_nonce = random(Nn)
-  (server_private_keyshare, server_keyshare) = GenerateAuthKeyPair()
-  preamble = Preamble(client_identity,
+  (server_private_keyshare, server_public_keyshare) = GenerateAuthKeyPair()
+  preamble = Preamble(cleartext_credentials.client_identity,
                       ke1,
-                      server_identity,
+                      cleartext_credentials.server_identity,
                       credential_response,
                       server_nonce,
-                      server_keyshare)
+                      server_public_keyshare)
 
-  dh1 = SerializeElement(server_private_keyshare * ke1.auth_request.client_keyshare)
-  dh2 = SerializeElement(server_private_key * ke1.auth_request.client_keyshare)
+  dh1 = SerializeElement(server_private_keyshare * ke1.auth_request.client_public_keyshare)
+  dh2 = SerializeElement(server_private_key * ke1.auth_request.client_public_keyshare)
   dh3 = SerializeElement(server_private_keyshare * client_public_key)
   ikm = concat(dh1, dh2, dh3)
 
@@ -3107,7 +3101,7 @@ def AuthServerRespond(server_identity, server_private_key, client_identity,
 
   state.expected_client_mac = MAC(Km3, Hash(concat(preamble, server_mac)))
   state.session_key = session_key
-  Create AuthResponse auth_response with (server_nonce, server_keyshare, server_mac)
+  Create AuthResponse auth_response with (server_nonce, server_public_keyshare, server_mac)
   return auth_response
 </pre><a href="#section-6.4.4-2" class="pilcrow">¶</a>
 </div>
@@ -3160,9 +3154,11 @@ such as SHAKE128 <span>[<a href="#FIPS202" class="cite xref">FIPS202</a>]</span>
 to align with the target security level of the OPAQUE configuration. For example,
 if the target security parameter for the configuration is 128-bits, then <code>Nh</code> SHOULD be at least 32 bytes.<a href="#section-7-2.2" class="pilcrow">¶</a>
 </li>
-        <li class="normal" id="section-7-2.3">The KSF has fixed parameters, chosen by the application, and implements the
-interface in <a href="#dependencies" class="auto internal xref">Section 2</a>. Examples include Argon2id <span>[<a href="#ARGON2" class="cite xref">ARGON2</a>]</span>,
-scrypt <span>[<a href="#SCRYPT" class="cite xref">SCRYPT</a>]</span>, and PBKDF2 <span>[<a href="#PBKDF2" class="cite xref">PBKDF2</a>]</span> with fixed parameter choices.<a href="#section-7-2.3" class="pilcrow">¶</a>
+        <li class="normal" id="section-7-2.3">The KSF is determined by the application and implements the interface in
+<a href="#dependencies" class="auto internal xref">Section 2</a>. As noted, collision resistance is required. Examples for KSF
+include Argon2id <span>[<a href="#ARGON2" class="cite xref">ARGON2</a>]</span>, scrypt <span>[<a href="#SCRYPT" class="cite xref">SCRYPT</a>]</span>, and PBKDF2
+<span>[<a href="#PBKDF2" class="cite xref">PBKDF2</a>]</span> with fixed parameter choices. See <a href="#app-considerations" class="auto internal xref">Section 8</a>
+for more information about this choice of function.<a href="#section-7-2.3" class="pilcrow">¶</a>
 </li>
         <li class="normal" id="section-7-2.4">The Group mode identifies the group used in the OPAQUE-3DH AKE. This SHOULD
 match that of the OPRF. For example, if the OPRF is ristretto255-SHA512,
@@ -3175,9 +3171,10 @@ parameters that are needed to prevent cross-protocol or downgrade attacks.<a hre
 <p id="section-7-4">Absent an application-specific profile, the following configurations are RECOMMENDED:<a href="#section-7-4" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-7-5.1">ristretto255-SHA512, HKDF-SHA-512, HMAC-SHA-512, SHA-512,
-  Argon2id(t=1, p=4, m=2^21), ristretto255<a href="#section-7-5.1" class="pilcrow">¶</a>
+  Argon2id(S = zeroes(16), p = 4, T = Nh, m = 2^21, t = 1, v = 0x13, K = nil, X = nil, y = 2), ristretto255<a href="#section-7-5.1" class="pilcrow">¶</a>
 </li>
-        <li class="normal" id="section-7-5.2">P256-SHA256, HKDF-SHA-256, HMAC-SHA-256, SHA-256, Argon2id(t=1, p=4, m=2^21), P-256<a href="#section-7-5.2" class="pilcrow">¶</a>
+        <li class="normal" id="section-7-5.2">P256-SHA256, HKDF-SHA-256, HMAC-SHA-256, SHA-256,
+  Argon2id(S = zeroes(16), p = 4, T = Nh, m = 2^21, t = 1, v = 0x13, K = nil, X = nil, y = 2), P-256<a href="#section-7-5.2" class="pilcrow">¶</a>
 </li>
       </ul>
 <p id="section-7-6">Future configurations may specify different combinations of dependent algorithms,
@@ -3224,12 +3221,26 @@ servers may use a domain name instead of a public key as their identifier. Absen
 alternate notions of identity, applications SHOULD set these identities to nil
 and rely solely on public key information.<a href="#section-8-2.3" class="pilcrow">¶</a>
 </li>
-        <li class="normal" id="section-8-2.4">Enumeration prevention: As described in <a href="#create-credential-response" class="auto internal xref">Section 6.3.2.2</a>, if servers
+        <li class="normal" id="section-8-2.4">Configuration and envelope updates: Applications may wish to update or change their
+configuration or other parameters which affect the client's RegistrationRecord over
+time. Some reasons for changing these are to use different cryptographic algorithms,
+e.g., a different KSF with improved parameters, or to update key material that is
+cryptographically bound to the RegistrationRecord, such as the server's public key
+(server_public_key). Any such change will require users to re-register to create a
+new RegistrationRecord. Supporting these types of updates can be helpful for applications
+which anticipate such changes in their deployment setting.<a href="#section-8-2.4" class="pilcrow">¶</a>
+</li>
+        <li class="normal" id="section-8-2.5">Password hardening parameters: Key stretching is done to help prevent password disclosure
+in the event of server compromise; see <a href="#key-stretch" class="auto internal xref">Section 10.8</a>. There is no ideal or default
+set of parameters, though relevant specifications for KSFs give some reasonable
+defaults.<a href="#section-8-2.5" class="pilcrow">¶</a>
+</li>
+        <li class="normal" id="section-8-2.6">Enumeration prevention: As described in <a href="#create-credential-response" class="auto internal xref">Section 6.3.2.2</a>, if servers
 receive a credential request for a non-existent client, they SHOULD respond with a
 "fake" response to prevent active client enumeration attacks. Servers that
 implement this mitigation SHOULD use the same configuration information (such as
 the oprf_seed) for all clients; see <a href="#preventing-client-enumeration" class="auto internal xref">Section 10.9</a>. In settings
-where this attack is not a concern, servers may choose to not support this functionality.<a href="#section-8-2.4" class="pilcrow">¶</a>
+where this attack is not a concern, servers may choose to not support this functionality.<a href="#section-8-2.6" class="pilcrow">¶</a>
 </li>
       </ul>
 </section>
@@ -3408,6 +3419,19 @@ an email address associated with a given account. This mechanism is part
 of the derivation of OPRF keys via a single PRF. As long as the derivation
 of different OPRF keys from a single OPRF has different PRF inputs, the
 protocol is secure. The choice of such inputs is up to the application.<a href="#section-10.1-4.8" class="pilcrow">¶</a>
+</li>
+          <li class="normal" id="section-10.1-4.9">
+            <span>[<a href="#JKX18" class="cite xref">JKX18</a>]</span> comments on a defense against offline
+dictionary attacks upon server compromise or honest-but-curious servers.
+The authors suggest implementing the OPRF phase as a threshold OPRF <span>[<a href="#TOPPSS" class="cite xref">TOPPSS</a>]</span>,
+effectively forcing an attacker to act online or to control at least t key
+shares (among the total n), where t is the threshold number of shares necessary
+to recombine the secret OPRF key, and only then be able to run an offline dictionary
+attack. This implementation only affects the server and changes nothing for the client.
+Furthermore, if the threshold OPRF servers holding these keys are separate from
+the authentication server, then recovering all n shares would still not suffice
+to run an offline dictionnary attack without access to the client record database.
+However, this mechanism is out of scope for this document.<a href="#section-10.1-4.9" class="pilcrow">¶</a>
 </li>
         </ul>
 <p id="section-10.1-5">The following list enumerates notable differences and refinements from the original
@@ -3600,18 +3624,19 @@ Additionally, validation MUST ensure the Diffie-Hellman shared secret is
 not the point at infinity.<a href="#section-10.7-1" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="oprf-key-stretching">
+<div id="key-stretch">
 <section id="section-10.8">
         <h3 id="name-oprf-key-stretching">
 <a href="#section-10.8" class="section-number selfRef">10.8. </a><a href="#name-oprf-key-stretching" class="section-name selfRef">OPRF Key Stretching</a>
         </h3>
 <p id="section-10.8-1">Applying a key stretching function to the output of the OPRF greatly increases the cost of an offline
 attack upon the compromise of the credential file at the server. Applications
-SHOULD select parameters that balance cost and complexity. Note that in
-OPAQUE, the key stretching function is executed by the client, as opposed to
-the server. This means that applications must consider a tradeoff between the
-performance of the protocol on clients (specifically low-end devices) and
-protection against offline attacks after a server compromise.<a href="#section-10.8-1" class="pilcrow">¶</a></p>
+SHOULD select parameters for the KSF that balance cost and complexity across
+all possible client implementations and deployments. Note that in OPAQUE, the
+key stretching function is executed by the client, as opposed to the server in
+traditional password hashing scenarios. This means that applications must consider
+a tradeoff between the performance of the protocol on clients (specifically low-end
+devices) and protection against offline attacks after a server compromise.<a href="#section-10.8-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="preventing-client-enumeration">
@@ -3690,12 +3715,10 @@ of this document.<a href="#section-10.10-2" class="pilcrow">¶</a></p>
 of pre-computation attacks. No extra salt value is needed. Also, clients never
 disclose their passwords to the server, even during registration. Note that a corrupted
 server can run an exhaustive offline dictionary attack to validate guesses for the client's
-password; this is inevitable in any aPAKE protocol. (OPAQUE enables defense against such
-offline dictionary attacks by distributing the server so that an offline attack is only
-possible if all - or a minimal number of - servers are compromised <span>[<a href="#JKX18" class="cite xref">JKX18</a>]</span>.) Furthermore,
-if the server does not sample this OPRF key with sufficiently high entropy, or if it is not
-kept hidden from an adversary, then any derivatives from the client's password may also be
-susceptible to an offline dictionary attack to recover the original password.<a href="#section-10.11-1" class="pilcrow">¶</a></p>
+password; this is inevitable in any aPAKE protocol. Furthermore, if the server does not
+sample this OPRF key with sufficiently high entropy, or if it is not kept hidden from an
+adversary, then any derivatives from the client's password may also be susceptible to an
+offline dictionary attack to recover the original password.<a href="#section-10.11-1" class="pilcrow">¶</a></p>
 <p id="section-10.11-2">Some applications may require learning the client's password for enforcing password
 rules. Doing so invalidates this important security property of OPAQUE and is
 NOT RECOMMENDED. Applications should move such checks to the client. Note that
@@ -3883,6 +3906,10 @@ incompatible with the OPRF algorithm.<a href="#section-10.12-1" class="pilcrow">
         <dd>
 <span class="refAuthor">Shoup, V.</span>, <span class="refTitle">"Security Analysis of SPAKE2+"</span>, <span class="seriesInfo">http://eprint.iacr.org/2020/313 </span>, <time datetime="2020" class="refDate">2020</time>. </dd>
 <dd class="break"></dd>
+<dt id="TOPPSS">[TOPPSS]</dt>
+        <dd>
+<span class="refAuthor">Jarecki, S.</span>, <span class="refAuthor">Kiayias, A.</span>, <span class="refAuthor">Krawczyk, H.</span>, and <span class="refAuthor">J. Xu</span>, <span class="refTitle">"TOPPSS: Cost-minimal Password-Protected Secret Sharing based on Threshold OPRF"</span>, <span class="seriesInfo">Applied Cryptology and Network Security - ACNS 2017 </span>, <time datetime="2017" class="refDate">2017</time>. </dd>
+<dd class="break"></dd>
 <dt id="WhatsAppE2E">[WhatsAppE2E]</dt>
         <dd>
 <span class="refTitle">"Security of End-to-End Encrypted Backups"</span>, <span>n.d.</span>, <span>&lt;<a href="https://www.whatsapp.com/security/WhatsApp_Security_Encrypted_Backups_Whitepaper.pdf">https://www.whatsapp.com/security/WhatsApp_Security_Encrypted_Backups_Whitepaper.pdf</a>&gt;</span>. </dd>
@@ -3939,7 +3966,7 @@ in the next subsection for posterity.<a href="#appendix-C-1" class="pilcrow">¶<
 flow above and security properties (KCI resistance and forward secrecy) outlined
 in <a href="#security-considerations" class="auto internal xref">Section 10</a>. Note that such an instantiation is not quantum-safe unless
 the OPRF is quantum-safe. However, an OPAQUE instantiation where the AKE is quantum-safe,
-but the OPRF is not, would still ensure the confidentiality of application data encrypted
+but the OPRF is not, would still ensure the confidentiality and integrity of application data encrypted
 under session_key (or a key derived from it) with a quantum-safe encryption function.<a href="#appendix-C-2" class="pilcrow">¶</a></p>
 <div id="hmqv-sketch">
 <section id="appendix-C.1">
@@ -3957,7 +3984,7 @@ preamble = concat("HMQV",
                   I2OSP(len(server_identity), 2), server_identity,
                   KE2.credential_response,
                   KE2.auth_response.server_nonce,
-                  KE2.auth_response.server_keyshare)
+                  KE2.auth_response.server_public_keyshare)
 </pre><a href="#appendix-C.1-2" class="pilcrow">¶</a>
 </div>
 <p id="appendix-C.1-3">Second, the IKM derivation would change. Assuming HMQV is instantiated with a cyclic
@@ -4093,10 +4120,8 @@ server_nonce: 71cd9960ecef2fe0d0f7494986fa3d8b2bb01963537e60efb13981e
 138e3d4a1
 client_nonce: da7e07376d6d6f034cfa9bb537d11b8c6b4238c334333d1f0aebb38
 0cae6a6cc
-server_keyshare: c8c39f573135474c51660b02425bca633e339cec4e1acc69c94d
-d48497fe4028
-client_keyshare: 0c3a00c961fead8a16f818929cc976f0475e4f723519318b96f4
-947a7a5f9663
+server_public_keyshare: c8c39f573135474c51660b02425bca633e339cec4e1ac
+c69c94dd48497fe4028
 server_private_keyshare: 2e842960258a95e28bcfef489cffd19d8ec99cc1375d
 840f96936da7dbb0b40d
 client_private_keyshare: 22c919134c9bdd9dc0c5ef3450f18b54820f43f646a9
@@ -4120,9 +4145,9 @@ client_public_key: 2ec892bdbf9b3e2ea834be9eb11f5d187e64ba661ec041c0a3
 b66db8b7d6cc30
 auth_key: 6cd32316f18d72a9a927a83199fa030663a38ce0c11fbaef82aa9003773
 0494fc555c4d49506284516edd1628c27965b7555a4ebfed2223199f6c67966dde822
-randomized_pwd: aac48c25ab036e30750839d31d6e73007344cb1155289fb7d329b
-eb932e9adeea73d5d5c22a0ce1952f8aba6d66007615cd1698d4ac85ef1fcf150031d
-1435d9
+randomized_password: aac48c25ab036e30750839d31d6e73007344cb1155289fb7
+d329beb932e9adeea73d5d5c22a0ce1952f8aba6d66007615cd1698d4ac85ef1fcf15
+0031d1435d9
 envelope: ac13171b2f17bc2c74997f0fce1e1f35bec6b91fe2e12dbd323d23ba7a3
 8dfecb9dbe7d48cf714fc3533becab6faf60b783c94d258477eb74ecc453413bf61c5
 3fd58f0fb3c1175410b674c02e1b59b2d729a865b709db3dc4ee2bb45703d5a8
@@ -4241,10 +4266,8 @@ server_nonce: 71cd9960ecef2fe0d0f7494986fa3d8b2bb01963537e60efb13981e
 138e3d4a1
 client_nonce: da7e07376d6d6f034cfa9bb537d11b8c6b4238c334333d1f0aebb38
 0cae6a6cc
-server_keyshare: c8c39f573135474c51660b02425bca633e339cec4e1acc69c94d
-d48497fe4028
-client_keyshare: 0c3a00c961fead8a16f818929cc976f0475e4f723519318b96f4
-947a7a5f9663
+server_public_keyshare: c8c39f573135474c51660b02425bca633e339cec4e1ac
+c69c94dd48497fe4028
 server_private_keyshare: 2e842960258a95e28bcfef489cffd19d8ec99cc1375d
 840f96936da7dbb0b40d
 client_private_keyshare: 22c919134c9bdd9dc0c5ef3450f18b54820f43f646a9
@@ -4268,9 +4291,9 @@ client_public_key: 2ec892bdbf9b3e2ea834be9eb11f5d187e64ba661ec041c0a3
 b66db8b7d6cc30
 auth_key: 6cd32316f18d72a9a927a83199fa030663a38ce0c11fbaef82aa9003773
 0494fc555c4d49506284516edd1628c27965b7555a4ebfed2223199f6c67966dde822
-randomized_pwd: aac48c25ab036e30750839d31d6e73007344cb1155289fb7d329b
-eb932e9adeea73d5d5c22a0ce1952f8aba6d66007615cd1698d4ac85ef1fcf150031d
-1435d9
+randomized_password: aac48c25ab036e30750839d31d6e73007344cb1155289fb7
+d329beb932e9adeea73d5d5c22a0ce1952f8aba6d66007615cd1698d4ac85ef1fcf15
+0031d1435d9
 envelope: ac13171b2f17bc2c74997f0fce1e1f35bec6b91fe2e12dbd323d23ba7a3
 8dfec1ac902dc5589e9a5f0de56ad685ea8486210ef41449cd4d8712828913c5d2b68
 0b2b3af4a26c765cff329bfb66d38ecf1d6cfa9e7a73c222c6efe0d9520f7d7c
@@ -4680,10 +4703,8 @@ server_nonce: 71cd9960ecef2fe0d0f7494986fa3d8b2bb01963537e60efb13981e
 138e3d4a1
 client_nonce: ab3d33bde0e93eda72392346a7a73051110674bbf6b1b7ffab8be4f
 91fdaeeb1
-server_keyshare: 020e67941e94deba835214421d2d8c90de9b0f7f925d11e2032c
-e19b1832ae8e0f
-client_keyshare: 03493f36ca12467d1f5eaaabea67ca31377c4869c1e9a62346b6
-f01a991624b95d
+server_public_keyshare: 020e67941e94deba835214421d2d8c90de9b0f7f925d1
+1e2032ce19b1832ae8e0f
 server_private_keyshare: 9addab838c920fa7044f3a46b91ecaea24b0e7203992
 8ee7d4c37a5b9bc17349
 client_private_keyshare: 89d5a7e18567f255748a86beac13913df755a5adf776
@@ -4707,8 +4728,8 @@ client_public_key: 02dc91b178ba2c4bbf9b9403fca25457b906a7f507e59b6e70
 3031e09114ba2be0
 auth_key: 5bd4be1602516092dc5078f8d699f5721dc1720a49fb80d8e5c16377abd
 0987b
-randomized_pwd: 06be0a1a51d56557a3adad57ba29c5510565dcd8b5078fa319151
-b9382258fb0
+randomized_password: 06be0a1a51d56557a3adad57ba29c5510565dcd8b5078fa3
+19151b9382258fb0
 envelope: a921f2a014513bd8a90e477a629794e89fec12d12206dde662ebdcf6567
 0e51fe155412cb432898eda63529c3b2633521f770cccbd25d7548a4e20665a45e65a
 handshake_secret: c59197dd9269abfdb3037ea1c203a97627e2c0aa142000d1c3f
@@ -4816,10 +4837,8 @@ server_nonce: 71cd9960ecef2fe0d0f7494986fa3d8b2bb01963537e60efb13981e
 138e3d4a1
 client_nonce: ab3d33bde0e93eda72392346a7a73051110674bbf6b1b7ffab8be4f
 91fdaeeb1
-server_keyshare: 020e67941e94deba835214421d2d8c90de9b0f7f925d11e2032c
-e19b1832ae8e0f
-client_keyshare: 03493f36ca12467d1f5eaaabea67ca31377c4869c1e9a62346b6
-f01a991624b95d
+server_public_keyshare: 020e67941e94deba835214421d2d8c90de9b0f7f925d1
+1e2032ce19b1832ae8e0f
 server_private_keyshare: 9addab838c920fa7044f3a46b91ecaea24b0e7203992
 8ee7d4c37a5b9bc17349
 client_private_keyshare: 89d5a7e18567f255748a86beac13913df755a5adf776
@@ -4843,8 +4862,8 @@ client_public_key: 02dc91b178ba2c4bbf9b9403fca25457b906a7f507e59b6e70
 3031e09114ba2be0
 auth_key: 5bd4be1602516092dc5078f8d699f5721dc1720a49fb80d8e5c16377abd
 0987b
-randomized_pwd: 06be0a1a51d56557a3adad57ba29c5510565dcd8b5078fa319151
-b9382258fb0
+randomized_password: 06be0a1a51d56557a3adad57ba29c5510565dcd8b5078fa3
+19151b9382258fb0
 envelope: a921f2a014513bd8a90e477a629794e89fec12d12206dde662ebdcf6567
 0e51f4d7773a36a208a866301dbb2858e40dc5638017527cf91aef32d3848eebe0971
 handshake_secret: 0ee4a82c4a34992f72bfbcb5d2ce64044477dfe200b9d8c92bf
@@ -4959,8 +4978,8 @@ server_public_key: 825f832667480f08b0c9069da5083ac4d0e9ee31b49c4e0310
 031fea04d52966
 server_nonce: 1e10f6eeab2a7a420bf09da9b27a4639645622c46358de9cf7ae813
 055ae2d12
-server_keyshare: 5236e2e06d49f0b496db2a786f6ee1016f15b4fd6c0dbd95d6b1
-17055d914157
+server_public_keyshare: 5236e2e06d49f0b496db2a786f6ee1016f15b4fd6c0db
+d95d6b117055d914157
 server_private_keyshare: 6d8fba9741a357584770f85294430bce2252fe212a8a
 372152a73c7ffe414503
 masking_key: 39ebd51f0e39a07a1c2d2431995b0399bca9996c5d10014d6ebab445
@@ -5140,8 +5159,8 @@ server_public_key: 0221e034c0e202fe883dcfc96802a7624166fed4cfcab4ae30
 cf5f3290d01c88bf
 server_nonce: 1e10f6eeab2a7a420bf09da9b27a4639645622c46358de9cf7ae813
 055ae2d12
-server_keyshare: 03f42965d5bcba2a590a49eb2418061effe40b5c29a34b8e5163
-e0ef32044b2e4c
+server_public_keyshare: 03f42965d5bcba2a590a49eb2418061effe40b5c29a34
+b8e5163e0ef32044b2e4c
 server_private_keyshare: 1a2a0ff27f3ca75221378a2a21fe5222ce0b439452f8
 70475857a34197ba8f6d
 masking_key: caecc6ccb4cae27cb54d8f3a1af1bac52a3d53107ce08497cdd362b1
