@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-05-11T01:19:20.268689+00:00",
+  "timestamp": "2023-05-21T01:26:02.865547+00:00",
   "repo": "cfrg/draft-irtf-cfrg-opaque",
   "labels": [
     {
@@ -5434,7 +5434,7 @@
       ],
       "body": "We have a use case where a HSM is used to store the server private key. Currently almost all HSMs use the PKCS#11 standard, which doesn't have support for ristretto255 + DH. It is my understanding that OPAQUE had official support for X25519 in the past but dropped it in favor of ristretto255.\r\n\r\nIs it possible to elaborate on the reasons for that decision? Is it still in scope to re-introduce it and provide test vectors?\r\n\r\nI believe that OPAQUE already does support using any algorithm as long as it does fulfill the stated security requirements, but official support would still be very favorable.\r\n\r\nIt should be noted that HSMs can use P256 instead, which is already officially supported by OPAQUE, but many, including us, would like to use Curve25519 when possible.",
       "createdAt": "2021-07-23T22:53:03Z",
-      "updatedAt": "2023-03-21T12:29:58Z",
+      "updatedAt": "2023-05-19T11:58:42Z",
       "closedAt": null,
       "comments": [
         {
@@ -5660,6 +5660,27 @@
           "body": "Oh yes, absolutely. When OPAQUE is accepted by the IETF it is still our intention to use this with HSMs. We have a lot of clients who prefer Curve25519/448 over the NIST prime ones.\r\n\r\nEDIT: just for clarification, HSMs are perfectly usable with P-256/384/521.",
           "createdAt": "2023-03-21T12:29:18Z",
           "updatedAt": "2023-03-21T12:29:58Z"
+        },
+        {
+          "author": "kevinlewi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Hi folks, I wanted to bring up this issue again after some more consideration. If we do decide to include test vectors for this, then another related question is, should we add the ristretto255+x25519 setting to the list of \"recommended\" configurations for OPAQUE?\r\n\r\nI think it is too niche to be considered on the list of recommended configurations. But if we don't recommend it, then it seems odd to me that we would have a set of test vectors for it.\r\n\r\nTherefore, I think it would be cleaner if we just omitted the test vectors for this, and we closed this issue + associated PR.\r\n\r\nSeparately, @daxpedda, we can certainly still support the x25519 implementation in the opaque-ke library, and will continue with the PR on that repo. I originally felt that we should not include it because it would not be part of the spec, but I've come around to and changed my mind on that, since I see the value in supporting more configurations beyond what the spec recommends. But do let me know what your thoughts are on this, as I think it would be a relief for me at least to not have to support the x25519 test vectors in the spec.\r\n\r\nThanks!",
+          "createdAt": "2023-05-19T00:42:11Z",
+          "updatedAt": "2023-05-19T00:42:11Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> I think it is too niche to be considered on the list of recommended configurations. But if we don't recommend it, then it seems odd to me that we would have a set of test vectors for it.\r\n\r\nI don't agree with this. It's fine to include test vectors for things that aren't recommended. \r\n\r\n> Therefore, I think it would be cleaner if we just omitted the test vectors for this, and we closed this issue + associated PR.\r\n\r\nI don't think this is the best outcome. Work on this issue revealed what I consider to be an editorial bug in the spec, in that we define 3DH -- literally three Diffie Hellman operations -- using prime-order groups, rather than Diffie Hellman operations! I think it would be much cleaner if, for example, we were to replace the prime-order group-based AKE description with one that's based on DH. X25519 would then fit naturally right in, as would ristretto255 and all the other prime-order groups.",
+          "createdAt": "2023-05-19T11:53:19Z",
+          "updatedAt": "2023-05-19T11:53:19Z"
+        },
+        {
+          "author": "daxpedda",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "As an implementor, I appreciate any help the specification can provide, test vectors are one of those things. Though I completely understand that the specifications job is not to cover everything an implementor might want. So this is an issue of scope, which I will squarely leave in your very capable hands.\r\n\r\n> I think it is too niche to be considered on the list of recommended configurations.\r\n\r\nAs far as I'm aware, the only use-case for this configuration is using an HSM with a non-NIST curve. Using HSMs in general is already pretty niche I would say.",
+          "createdAt": "2023-05-19T11:58:42Z",
+          "updatedAt": "2023-05-19T11:58:42Z"
         }
       ]
     },
@@ -31291,7 +31312,7 @@
       "labels": [],
       "body": "This did introduce some editorial changes to accommodate the x25519 AKE, but I don't think they're unreasonable. The actual reference implementation needs to be cleaned up somewhat, but I think we can at least use this to test for interop for the time being. I'll work on cleaning up the code in a bit, so, starting as a draft now.\r\n\r\nCloses #238\r\n\r\ncc @daxpedda ",
       "createdAt": "2023-03-21T16:32:19Z",
-      "updatedAt": "2023-04-03T03:16:57Z",
+      "updatedAt": "2023-05-19T11:41:47Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-opaque",
       "baseRefName": "master",
       "baseRefOid": "ac1f7746855cdcdeb42f64256f463a67b94d8fa3",
@@ -31580,9 +31601,9 @@
           "comments": [
             {
               "originalPosition": 68,
-              "body": "Ah, sorry, I can see how my question is confusing. So in `opaque-ke` we were using OPRF with a custom ciphersuite when chossing Curve25519, which was possible because the hash2curve specification does provide a ciphersuite for Curve25519.\r\n\r\nSo my question is: the other ciphersuites do use OPRF to derive a key pair in `DeriveAuthKeyPair`. So why do other ciphersuites need that but Curve25519 doesn't? I thought it was necessary to for security reasons (that I have no clue about).",
+              "body": "Ah, sorry, I can see how my question is confusing. So in `opaque-ke` we were using OPRF with a custom ciphersuite when chossing Curve25519, which was possible because the hash2curve specification does provide a ciphersuite for Curve25519.\r\n\r\nSo my question is: the other ciphersuites do use OPRF to derive a key pair in `DeriveAuthKeyPair`. So why do other ciphersuites need that but Curve25519 doesn't? I thought it was necessary for security reasons (that I have no clue about).",
               "createdAt": "2023-03-25T21:32:26Z",
-              "updatedAt": "2023-03-25T21:32:26Z"
+              "updatedAt": "2023-05-19T11:41:47Z"
             }
           ]
         },
