@@ -1282,10 +1282,10 @@ based on 3DH.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
                 </ul>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.4">
-                <p id="section-toc.1-1.6.2.4.1"><a href="#section-6.4" class="auto internal xref">6.4</a>.  <a href="#name-ake-protocol" class="internal xref">AKE Protocol</a></p>
+                <p id="section-toc.1-1.6.2.4.1"><a href="#section-6.4" class="auto internal xref">6.4</a>.  <a href="#name-3dh-protocol" class="internal xref">3DH Protocol</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.4.2.1">
-                    <p id="section-toc.1-1.6.2.4.2.1.1"><a href="#section-6.4.1" class="auto internal xref">6.4.1</a>.  <a href="#name-ake-group" class="internal xref">AKE Group</a></p>
+                    <p id="section-toc.1-1.6.2.4.2.1.1"><a href="#section-6.4.1" class="auto internal xref">6.4.1</a>.  <a href="#name-3dh-primitives" class="internal xref">3DH Primitives</a></p>
 </li>
                   <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.4.2.2">
                     <p id="section-toc.1-1.6.2.4.2.2.1"><a href="#section-6.4.2" class="auto internal xref">6.4.2</a>.  <a href="#name-key-schedule-functions" class="internal xref">Key Schedule Functions</a></p>
@@ -2749,8 +2749,8 @@ def RecoverCredentials(password, blind, response,
 </div>
 <div id="ake-protocol">
 <section id="section-6.4">
-        <h3 id="name-ake-protocol">
-<a href="#section-6.4" class="section-number selfRef">6.4. </a><a href="#name-ake-protocol" class="section-name selfRef">AKE Protocol</a>
+        <h3 id="name-3dh-protocol">
+<a href="#section-6.4" class="section-number selfRef">6.4. </a><a href="#name-3dh-protocol" class="section-name selfRef">3DH Protocol</a>
         </h3>
 <p id="section-6.4-1">This section describes the authenticated key exchange protocol for OPAQUE using
 3DH, a 3-message AKE which satisfies the forward secrecy and KCI properties
@@ -2775,10 +2775,10 @@ following fields:<a href="#section-6.4-4" class="pilcrow">¶</a></p>
 server functions, respectively.<a href="#section-6.4-6" class="pilcrow">¶</a></p>
 <div id="key-creation">
 <section id="section-6.4.1">
-          <h4 id="name-ake-group">
-<a href="#section-6.4.1" class="section-number selfRef">6.4.1. </a><a href="#name-ake-group" class="section-name selfRef">AKE Group</a>
+          <h4 id="name-3dh-primitives">
+<a href="#section-6.4.1" class="section-number selfRef">6.4.1. </a><a href="#name-3dh-primitives" class="section-name selfRef">3DH Primitives</a>
           </h4>
-<p id="section-6.4.1-1">We assume the following functions to exist for all candidate groups in this
+<p id="section-6.4.1-1">We assume the following functions to exist for all Diffie Hellman groups in this
 setting:<a href="#section-6.4.1-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-6.4.1-2.1">DeriveDHKeypair(seed): Derive a private and public DiffieHellman
@@ -2787,18 +2787,18 @@ depends on the implementation, whereas the type of the public key is a
 byte string of <code>Npk</code> bytes.<a href="#section-6.4.1-2.1" class="pilcrow">¶</a>
 </li>
             <li class="normal" id="section-6.4.1-2.2">DH(k, B): A function that performs the Diffie-Hellman operation
-between the private input <code>k</code> and public input <code>B</code>, and outputs <code>shared_value</code>.
+between the private input <code>k</code> and public input <code>B</code>.
 The output of this function is a unique, fixed-length byte string.<a href="#section-6.4.1-2.2" class="pilcrow">¶</a>
 </li>
           </ul>
 <p id="section-6.4.1-3">Implementations for recommended groups in <a href="#configurations" class="auto internal xref">Section 7</a>, as well as groups
 covered by test vectors in <a href="#test-vectors" class="auto internal xref">Appendix D</a>, are described in the following sections.<a href="#section-6.4.1-3" class="pilcrow">¶</a></p>
-<div id="ristretto255-group">
+<div id="dh-ristretto255">
 <section id="section-6.4.1.1">
-            <h5 id="name-ristretto255-group">
-<a href="#section-6.4.1.1" class="section-number selfRef">6.4.1.1. </a><a href="#name-ristretto255-group" class="section-name selfRef">ristretto255 Group</a>
+            <h5 id="name-3dh-ristretto255">
+<a href="#section-6.4.1.1" class="section-number selfRef">6.4.1.1. </a><a href="#name-3dh-ristretto255" class="section-name selfRef">3DH ristretto255</a>
             </h5>
-<p id="section-6.4.1.1-1">This section describes the implementation of the AKE group based on ristretto255,
+<p id="section-6.4.1.1-1">This section describes the implementation of the DH primitive based on ristretto255,
 as defined in <span>[<a href="#RISTRETTO" class="cite xref">RISTRETTO</a>]</span>.<a href="#section-6.4.1.1-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-6.4.1.1-2.1">DeriveDHKeypair(seed): This function is implemented as
@@ -2815,12 +2815,12 @@ encoded using the SerializeElement function of the OPRF group described in
             </ul>
 </section>
 </div>
-<div id="p-256-group">
+<div id="dh-p-256">
 <section id="section-6.4.1.2">
-            <h5 id="name-p-256-group">
-<a href="#section-6.4.1.2" class="section-number selfRef">6.4.1.2. </a><a href="#name-p-256-group" class="section-name selfRef">P-256 Group</a>
+            <h5 id="name-3dh-p-256">
+<a href="#section-6.4.1.2" class="section-number selfRef">6.4.1.2. </a><a href="#name-3dh-p-256" class="section-name selfRef">3DH P-256</a>
             </h5>
-<p id="section-6.4.1.2-1">This section describes the implementation of the AKE group based on NIST P-256,
+<p id="section-6.4.1.2-1">This section describes the implementation of the DH primitive based on NIST P-256,
 as defined in <span>[<a href="#NISTCurves" class="cite xref">NISTCurves</a>]</span>.<a href="#section-6.4.1.2-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-6.4.1.2-2.1">DeriveDHKeypair(seed): This function is implemented as
@@ -2837,12 +2837,12 @@ group described in <span>[<a href="#OPRF" class="cite xref">OPRF</a>], <a href="
             </ul>
 </section>
 </div>
-<div id="curve25519-group">
+<div id="dh-curve25519">
 <section id="section-6.4.1.3">
-            <h5 id="name-curve25519-group">
-<a href="#section-6.4.1.3" class="section-number selfRef">6.4.1.3. </a><a href="#name-curve25519-group" class="section-name selfRef">Curve25519 Group</a>
+            <h5 id="name-3dh-curve25519">
+<a href="#section-6.4.1.3" class="section-number selfRef">6.4.1.3. </a><a href="#name-3dh-curve25519" class="section-name selfRef">3DH Curve25519</a>
             </h5>
-<p id="section-6.4.1.3-1">This section describes the implementation of the AKE group based on Curve25519,
+<p id="section-6.4.1.3-1">This section describes the implementation of the DH primitive based on Curve25519,
 as defined in <span>[<a href="#Curve25519" class="cite xref">Curve25519</a>]</span>.<a href="#section-6.4.1.3-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-6.4.1.3-2.1">DeriveDHKeypair(seed): This function is implemented by returning the private

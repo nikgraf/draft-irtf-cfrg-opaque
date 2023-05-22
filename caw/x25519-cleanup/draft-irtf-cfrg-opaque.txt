@@ -99,8 +99,8 @@ Table of Contents
      6.3.  Credential Retrieval
        6.3.1.  Credential Retrieval Messages
        6.3.2.  Credential Retrieval Functions
-     6.4.  AKE Protocol
-       6.4.1.  AKE Group
+     6.4.  3DH Protocol
+       6.4.1.  3DH Primitives
        6.4.2.  Key Schedule Functions
        6.4.3.  3DH Client Functions
        6.4.4.  3DH Server Functions
@@ -1316,7 +1316,7 @@ def RecoverCredentials(password, blind, response,
 
   return (client_private_key, cleartext_credentials, server_public_key, export_key)
 
-6.4.  AKE Protocol
+6.4.  3DH Protocol
 
    This section describes the authenticated key exchange protocol for
    OPAQUE using 3DH, a 3-message AKE which satisfies the forward secrecy
@@ -1339,10 +1339,10 @@ def RecoverCredentials(password, blind, response,
    Section 6.4.3 and Section 6.4.4 specify the inner workings of client
    and server functions, respectively.
 
-6.4.1.  AKE Group
+6.4.1.  3DH Primitives
 
-   We assume the following functions to exist for all candidate groups
-   in this setting:
+   We assume the following functions to exist for all Diffie Hellman
+   groups in this setting:
 
    *  DeriveDHKeypair(seed): Derive a private and public DiffieHellman
       key pair deterministically from the input seed.  The type of the
@@ -1350,18 +1350,17 @@ def RecoverCredentials(password, blind, response,
       public key is a byte string of Npk bytes.
 
    *  DH(k, B): A function that performs the Diffie-Hellman operation
-      between the private input k and public input B, and outputs
-      shared_value.  The output of this function is a unique, fixed-
-      length byte string.
+      between the private input k and public input B.  The output of
+      this function is a unique, fixed-length byte string.
 
    Implementations for recommended groups in Section 7, as well as
    groups covered by test vectors in Appendix D, are described in the
    following sections.
 
-6.4.1.1.  ristretto255 Group
+6.4.1.1.  3DH ristretto255
 
-   This section describes the implementation of the AKE group based on
-   ristretto255, as defined in [RISTRETTO].
+   This section describes the implementation of the DH primitive based
+   on ristretto255, as defined in [RISTRETTO].
 
    *  DeriveDHKeypair(seed): This function is implemented as
       DeriveKeyPair(seed, "OPAQUE-DeriveAuthKeyPair"), where
@@ -1375,10 +1374,10 @@ def RecoverCredentials(password, blind, response,
       output is then encoded using the SerializeElement function of the
       OPRF group described in [OPRF], Section 2.1.
 
-6.4.1.2.  P-256 Group
+6.4.1.2.  3DH P-256
 
-   This section describes the implementation of the AKE group based on
-   NIST P-256, as defined in [NISTCurves].
+   This section describes the implementation of the DH primitive based
+   on NIST P-256, as defined in [NISTCurves].
 
    *  DeriveDHKeypair(seed): This function is implemented as
       DeriveKeyPair(seed, "OPAQUE-DeriveAuthKeyPair"), where
@@ -1393,10 +1392,10 @@ def RecoverCredentials(password, blind, response,
       SerializeElement function of the OPRF group described in [OPRF],
       Section 2.1.
 
-6.4.1.3.  Curve25519 Group
+6.4.1.3.  3DH Curve25519
 
-   This section describes the implementation of the AKE group based on
-   Curve25519, as defined in [Curve25519].
+   This section describes the implementation of the DH primitive based
+   on Curve25519, as defined in [Curve25519].
 
    *  DeriveDHKeypair(seed): This function is implemented by returning
       the private key k based on seed (of length Nseed = 32 bytes), as
