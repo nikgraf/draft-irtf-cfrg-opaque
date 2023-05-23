@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-05-21T01:26:02.865547+00:00",
+  "timestamp": "2023-05-23T01:20:38.966662+00:00",
   "repo": "cfrg/draft-irtf-cfrg-opaque",
   "labels": [
     {
@@ -5422,7 +5422,7 @@
       "id": "MDU6SXNzdWU5NTE5NDA1MDM=",
       "title": "Curve25519 support",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-opaque/issues/238",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "daxpedda",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [
@@ -5434,8 +5434,8 @@
       ],
       "body": "We have a use case where a HSM is used to store the server private key. Currently almost all HSMs use the PKCS#11 standard, which doesn't have support for ristretto255 + DH. It is my understanding that OPAQUE had official support for X25519 in the past but dropped it in favor of ristretto255.\r\n\r\nIs it possible to elaborate on the reasons for that decision? Is it still in scope to re-introduce it and provide test vectors?\r\n\r\nI believe that OPAQUE already does support using any algorithm as long as it does fulfill the stated security requirements, but official support would still be very favorable.\r\n\r\nIt should be noted that HSMs can use P256 instead, which is already officially supported by OPAQUE, but many, including us, would like to use Curve25519 when possible.",
       "createdAt": "2021-07-23T22:53:03Z",
-      "updatedAt": "2023-05-19T11:58:42Z",
-      "closedAt": null,
+      "updatedAt": "2023-05-22T19:52:38Z",
+      "closedAt": "2023-05-22T19:52:38Z",
       "comments": [
         {
           "author": "stef",
@@ -5681,6 +5681,13 @@
           "body": "As an implementor, I appreciate any help the specification can provide, test vectors are one of those things. Though I completely understand that the specifications job is not to cover everything an implementor might want. So this is an issue of scope, which I will squarely leave in your very capable hands.\r\n\r\n> I think it is too niche to be considered on the list of recommended configurations.\r\n\r\nAs far as I'm aware, the only use-case for this configuration is using an HSM with a non-NIST curve. Using HSMs in general is already pretty niche I would say.",
           "createdAt": "2023-05-19T11:58:42Z",
           "updatedAt": "2023-05-19T11:58:42Z"
+        },
+        {
+          "author": "kevinlewi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Thanks for chiming in @daxpedda and @chris-wood with your comments -- I've updated #404 with a couple of changes which should be compatible with the opaque-ke implementation. Should be ready for review!",
+          "createdAt": "2023-05-21T09:18:57Z",
+          "updatedAt": "2023-05-21T09:18:57Z"
         }
       ]
     },
@@ -7437,7 +7444,7 @@
       "id": "I_kwDOD79ejs5C4AcT",
       "title": "Align reference implementation with the specification",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-opaque/issues/323",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "chris-wood",
       "authorAssociation": "COLLABORATOR",
       "assignees": [
@@ -7448,8 +7455,8 @@
       ],
       "body": "Right now the spec and reference implementation use different names for functions, parameters, etc. This is likely confusing. Let's update the reference implementation such that the two are in sync.",
       "createdAt": "2022-02-02T14:14:26Z",
-      "updatedAt": "2023-04-02T01:29:55Z",
-      "closedAt": null,
+      "updatedAt": "2023-05-21T09:22:57Z",
+      "closedAt": "2023-05-21T09:22:57Z",
       "comments": [
         {
           "author": "bytemare",
@@ -7457,6 +7464,13 @@
           "body": "This should be good now, isn't it?",
           "createdAt": "2023-04-02T01:29:55Z",
           "updatedAt": "2023-04-02T01:29:55Z"
+        },
+        {
+          "author": "kevinlewi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Yes I believe this was addressed by #407 -- thank you!",
+          "createdAt": "2023-05-21T09:22:57Z",
+          "updatedAt": "2023-05-21T09:22:57Z"
         }
       ]
     },
@@ -8607,7 +8621,7 @@
       "id": "I_kwDOD79ejs5fYZhy",
       "title": "Slowing down attacks on compromised database",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-opaque/issues/395",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "mitar",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [
@@ -8616,8 +8630,8 @@
       "labels": [],
       "body": "Section [10.8. OPRF Key Stretching](https://cfrg.github.io/draft-irtf-cfrg-opaque/draft-irtf-cfrg-opaque.html#name-oprf-key-stretching) explains:\r\n\r\n> that applications must consider a tradeoff between the performance of the protocol on clients (specifically low-end devices) and protection against offline attacks after a server compromise.\r\n\r\nThis is very high-level and not very instructive for how exactly can one find sweet spot in this tradeoff. Especially the issue here is that somebody integrating OPAQUE into their applications might not be savvy enough to do make this call. (I like how [Ory](https://www.ory.sh/choose-recommended-argon2-parameters-password-hashing/#use-open-source-to-choose-recommended-parameters) made a script to help their integrators to determine good configuration.)\r\n\r\nTo my understanding the underlying issue here is that there is a fundamental issue with OPAQUE: because hash is computed on the client side and not on the server side, integrator of OPAQUE has much less control and even understanding of capabilities clients might have, not to mention that the diversity of client devices is higher and thus one generally has to pick the least resource intensive hash configuration for good user experience for all or most users or at least less resource intensive configuration than what one for server-side would be (e.g., mobile devices has less memory and CPU power than a server). As such it looks to me that OPAQUE already makes a trade-off and weakens offline attacks protection for protecting passwords in transit.\r\n\r\nI feel spec is slightly misleading here. When I started reading it it looked to me like perfect combination of things: a) expensive hashing is done on the client b) no password is stored on the server in any form c) password is never send to the server. But even if password is not stored on the server in any form, server contains everything needed for (bruteforce or dictionary) attacking and trying to determine the password. OPAQUE just replaces one one-way function (hashing) with another (decryption without a key). And we generally now know how to have slow hashing functions, while decryption we generally still optimize for speed. So the only thing standing in way of how fast you can do an offline attack is the hashing configuration intended for the client.\r\n\r\nTogether with no good story on how to upgrade hashing configuration (#394) this looks to me like a pretty important downside of OPAQUE. And leaving to integrators to determine how to solve this does not feel good to me. Maybe OPAQUE is missing one more piece which would make the offline attack harder while client hashing would be what protects data in transit?",
       "createdAt": "2023-02-26T22:49:08Z",
-      "updatedAt": "2023-03-20T18:27:58Z",
-      "closedAt": null,
+      "updatedAt": "2023-05-22T19:53:34Z",
+      "closedAt": "2023-05-22T19:53:34Z",
       "comments": [
         {
           "author": "stef",
@@ -8646,6 +8660,13 @@
           "body": "Sorry for the delay, @mitar! And thanks for filing the issue. The complete text in Section 10.8 reads:\r\n\r\n> Applying a key stretching function to the output of the OPRF greatly increases the cost of an offline attack upon the compromise of the credential file at the server. Applications SHOULD select parameters that balance cost and complexity. Note that in OPAQUE, the key stretching function is executed by the client, as opposed to the server. This means that applications must consider a tradeoff between the performance of the protocol on clients (specifically low-end devices) and protection against offline attacks after a server compromise.\r\n\r\nWhile this doesn't exactly say _how_ key stretching parameters ought to be chosen, it does seem to make the tradeoff clear.\r\n\r\nAre you asking for clarity on how the parameters ought to be chosen, perhaps by pointing to common examples? Or maybe you're asking for additional text about how this tradeoff is unique to OPAQUE compared to other password hashing scenarios? Do you have suggested text you might add?",
           "createdAt": "2023-03-20T18:25:51Z",
           "updatedAt": "2023-03-20T18:27:58Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@mitar we're going to close this in the absence of concrete suggestions on how to make the tradeoff. Please feel free to reopen if you feel strongly that something should be done here, and ideally if you also have something specific to add, change, or remove!",
+          "createdAt": "2023-05-22T19:53:32Z",
+          "updatedAt": "2023-05-22T19:53:32Z"
         }
       ]
     },
@@ -31305,24 +31326,26 @@
       "id": "PR_kwDOD79ejs5MkQmY",
       "title": "Add x25519 AKE test vectors",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-opaque/pull/404",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "chris-wood",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "This did introduce some editorial changes to accommodate the x25519 AKE, but I don't think they're unreasonable. The actual reference implementation needs to be cleaned up somewhat, but I think we can at least use this to test for interop for the time being. I'll work on cleaning up the code in a bit, so, starting as a draft now.\r\n\r\nCloses #238\r\n\r\ncc @daxpedda ",
       "createdAt": "2023-03-21T16:32:19Z",
-      "updatedAt": "2023-05-19T11:41:47Z",
+      "updatedAt": "2023-05-22T19:52:37Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-opaque",
       "baseRefName": "master",
-      "baseRefOid": "ac1f7746855cdcdeb42f64256f463a67b94d8fa3",
+      "baseRefOid": "7b23be528bee6332cb268803db4d9c502755e4e0",
       "headRepository": "cfrg/draft-irtf-cfrg-opaque",
       "headRefName": "caw/x25519-vectors",
-      "headRefOid": "05bf31ef996f77f3291a1c54417f7aa515094414",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "7360d5754cf6c2dcbeacbdeb4f0d6e33a39bfb91",
+      "closedAt": "2023-05-22T19:52:37Z",
+      "mergedAt": "2023-05-22T19:52:37Z",
+      "mergedBy": "chris-wood",
+      "mergeCommit": {
+        "oid": "727b9acb908dce296e15bc14a53a7d04ba9604d0"
+      },
       "comments": [
         {
           "author": "stef",
@@ -31372,6 +31395,13 @@
           "body": "@bytemare can you please take another look?",
           "createdAt": "2023-03-23T15:30:29Z",
           "updatedAt": "2023-03-23T15:30:29Z"
+        },
+        {
+          "author": "kevinlewi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Spec changes:\r\n- Renamed \"ScalarMult(k, B)\" to \"DiffieHellman(k, B)\" to more accurately reflect that we are doing a DH operation in the places where it is mentioned in the spec\r\n- Renamed the group's display name from \"x25519\" to \"curve25519\" in the test vectors\r\n- Synced latest test vectors into spec\r\n\r\nSage POC code changes:\r\n- Fixed clamping issue\r\n- Added test to ensure that private key outputs for curve25519 are always clamped\r\n- Added back `client_public_keyshare` into the inputs for each test vector (was mistakenly removed in #404)",
+          "createdAt": "2023-05-21T05:52:55Z",
+          "updatedAt": "2023-05-22T00:33:06Z"
         }
       ],
       "reviews": [
@@ -31724,6 +31754,19 @@
           "body": "Based on above comments. Maybe it would be helpful to add a test to check that all private keys / scalars that we publish in the test vectors are actually clamped?",
           "createdAt": "2023-04-03T03:09:12Z",
           "updatedAt": "2023-04-03T03:16:57Z",
+          "comments": []
+        },
+        {
+          "id": "PRR_kwDOD79ejs5Vq0PY",
+          "commit": {
+            "abbreviatedOid": "a55d914"
+          },
+          "author": "kevinlewi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "This is approved by me in case it wasn't clear :P ",
+          "createdAt": "2023-05-22T19:09:57Z",
+          "updatedAt": "2023-05-22T19:09:57Z",
           "comments": []
         }
       ]
@@ -32132,6 +32175,402 @@
               "updatedAt": "2023-04-02T01:27:58Z"
             }
           ]
+        }
+      ]
+    },
+    {
+      "number": 411,
+      "id": "PR_kwDOD79ejs5RCsXg",
+      "title": "More cleanup to go with x25519 vectors",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-opaque/pull/411",
+      "state": "MERGED",
+      "author": "chris-wood",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This change cleans up some more stuff in the implementation and spec, fixing some errors along the way.",
+      "createdAt": "2023-05-22T17:48:38Z",
+      "updatedAt": "2023-05-22T19:51:55Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-opaque",
+      "baseRefName": "caw/x25519-vectors",
+      "baseRefOid": "a55d914a5207c6490de54c14cf6be59bf7f8bfd3",
+      "headRepository": "cfrg/draft-irtf-cfrg-opaque",
+      "headRefName": "caw/x25519-cleanup",
+      "headRefOid": "cea59e5e4438d401ea89ea6197a1b74fb3728f43",
+      "closedAt": "2023-05-22T19:51:55Z",
+      "mergedAt": "2023-05-22T19:51:55Z",
+      "mergedBy": "chris-wood",
+      "mergeCommit": {
+        "oid": "7360d5754cf6c2dcbeacbdeb4f0d6e33a39bfb91"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOD79ejs5VqsRy",
+          "commit": {
+            "abbreviatedOid": "6d8ba3e"
+          },
+          "author": "kevinlewi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "CHANGES_REQUESTED",
+          "body": "First round of requested changes, mainly looking to make sure that we keep parity with the name changes in the spec and the sage code",
+          "createdAt": "2023-05-22T18:51:21Z",
+          "updatedAt": "2023-05-22T19:08:50Z",
+          "comments": [
+            {
+              "originalPosition": 200,
+              "body": "Was this an intended change?",
+              "createdAt": "2023-05-22T18:51:21Z",
+              "updatedAt": "2023-05-22T19:08:50Z"
+            },
+            {
+              "originalPosition": 41,
+              "body": "nit: Can you change the anchor to be {#3dh-protocol}? And change wherever it is referenced as well?",
+              "createdAt": "2023-05-22T18:53:21Z",
+              "updatedAt": "2023-05-22T19:08:50Z"
+            },
+            {
+              "originalPosition": 50,
+              "body": "nit: Can you change the anchor to be {#3dh-primitives}? And change wherever it is referenced as well?",
+              "createdAt": "2023-05-22T18:53:29Z",
+              "updatedAt": "2023-05-22T19:08:50Z"
+            },
+            {
+              "originalPosition": 53,
+              "body": "Diffie Hellman -> Diffie-Hellman",
+              "createdAt": "2023-05-22T18:54:02Z",
+              "updatedAt": "2023-05-22T19:08:50Z"
+            },
+            {
+              "originalPosition": 85,
+              "body": "I see that we are renaming this, but to be consistent, there are a couple of other places where we would also need to rename this:\r\n1) In the sage code, function names that still say \"derive_auth_key_pair\"\r\n2) The constant string on this next line still says \"OPAQUE-DeriveAuthKeyPair\", which should be updated as well.\r\n\r\nBtw, we are also changing the capitalization format here, from \"KeyPair\" to \"Keypair\", despite this being inconsistent with how the OPRF spec displays it (\"DeriveKeyPair\"). I think we should keep it as KeyPair.\r\n\r\nAlso, consider spelling it out fully: \"DeriveDiffieHellmanKeyPair\", or if that is too long, capitalizating the D but not the H, to be: \"DeriveDhKeyPair\"",
+              "createdAt": "2023-05-22T18:57:33Z",
+              "updatedAt": "2023-05-22T19:08:50Z"
+            },
+            {
+              "originalPosition": 81,
+              "body": "What is a DH primitive? Should we at least spell this out (\"Diffie Hellman primitive\"). And does this differ from a \"Diffie Hellman group\" as mentioned on line 1407? Maybe if we mean the same thing, we should just be consistent and stick to the same terminology in all places.",
+              "createdAt": "2023-05-22T19:00:55Z",
+              "updatedAt": "2023-05-22T19:08:50Z"
+            },
+            {
+              "originalPosition": 106,
+              "body": "Same comment here on what is a \"DH primitive\"",
+              "createdAt": "2023-05-22T19:01:05Z",
+              "updatedAt": "2023-05-22T19:08:50Z"
+            },
+            {
+              "originalPosition": 131,
+              "body": "Same here",
+              "createdAt": "2023-05-22T19:01:25Z",
+              "updatedAt": "2023-05-22T19:08:50Z"
+            },
+            {
+              "originalPosition": 145,
+              "body": "nit: used raw -> used as-is",
+              "createdAt": "2023-05-22T19:02:23Z",
+              "updatedAt": "2023-05-22T19:08:51Z"
+            },
+            {
+              "originalPosition": 70,
+              "body": "Why change the name here from \"DiffieHellman(k, B)\" to \"DH(k, B)\"? The latter feels less descriptive, and I am in favor of keeping it as DiffieHellman unless it conflicts with something else...",
+              "createdAt": "2023-05-22T19:03:04Z",
+              "updatedAt": "2023-05-22T19:08:51Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOD79ejs5Vq0n8",
+          "commit": {
+            "abbreviatedOid": "6d8ba3e"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-05-22T19:11:13Z",
+          "updatedAt": "2023-05-22T19:11:13Z",
+          "comments": [
+            {
+              "originalPosition": 85,
+              "body": "I had spelled it out fully first, but it was really quite long and I made it short. I don't feel strongly, though.",
+              "createdAt": "2023-05-22T19:11:13Z",
+              "updatedAt": "2023-05-22T19:11:13Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOD79ejs5Vq0yV",
+          "commit": {
+            "abbreviatedOid": "6d8ba3e"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-05-22T19:11:48Z",
+          "updatedAt": "2023-05-22T19:11:49Z",
+          "comments": [
+            {
+              "originalPosition": 81,
+              "body": "It's just a name for a thing that has (1) a key derivation function and (2) a DH operation. We can call it whatever we want. Group feels wrong for that name.",
+              "createdAt": "2023-05-22T19:11:48Z",
+              "updatedAt": "2023-05-22T19:11:49Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOD79ejs5Vq1Hc",
+          "commit": {
+            "abbreviatedOid": "6d8ba3e"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-05-22T19:12:12Z",
+          "updatedAt": "2023-05-22T19:12:13Z",
+          "comments": [
+            {
+              "originalPosition": 145,
+              "body": "This is copied from RFC8446, so I'm going to leave it as-is. =)",
+              "createdAt": "2023-05-22T19:12:13Z",
+              "updatedAt": "2023-05-22T19:12:13Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOD79ejs5Vq1cs",
+          "commit": {
+            "abbreviatedOid": "6d8ba3e"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-05-22T19:12:35Z",
+          "updatedAt": "2023-05-22T19:12:35Z",
+          "comments": [
+            {
+              "originalPosition": 70,
+              "body": "It's a long name? \ud83e\udd37 ",
+              "createdAt": "2023-05-22T19:12:35Z",
+              "updatedAt": "2023-05-22T19:12:35Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOD79ejs5Vq2rC",
+          "commit": {
+            "abbreviatedOid": "6d8ba3e"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-05-22T19:14:52Z",
+          "updatedAt": "2023-05-22T19:14:53Z",
+          "comments": [
+            {
+              "originalPosition": 200,
+              "body": "Nope, reverting.",
+              "createdAt": "2023-05-22T19:14:52Z",
+              "updatedAt": "2023-05-22T19:14:53Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOD79ejs5Vq4-M",
+          "commit": {
+            "abbreviatedOid": "6d8ba3e"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-05-22T19:19:40Z",
+          "updatedAt": "2023-05-22T19:19:40Z",
+          "comments": [
+            {
+              "originalPosition": 131,
+              "body": "Fixed.",
+              "createdAt": "2023-05-22T19:19:40Z",
+              "updatedAt": "2023-05-22T19:19:40Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOD79ejs5Vq5Be",
+          "commit": {
+            "abbreviatedOid": "6d8ba3e"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-05-22T19:19:42Z",
+          "updatedAt": "2023-05-22T19:19:43Z",
+          "comments": [
+            {
+              "originalPosition": 106,
+              "body": "Fixed.",
+              "createdAt": "2023-05-22T19:19:42Z",
+              "updatedAt": "2023-05-22T19:19:43Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOD79ejs5Vq5G2",
+          "commit": {
+            "abbreviatedOid": "6d8ba3e"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-05-22T19:19:46Z",
+          "updatedAt": "2023-05-22T19:19:47Z",
+          "comments": [
+            {
+              "originalPosition": 81,
+              "body": "Fixed.",
+              "createdAt": "2023-05-22T19:19:46Z",
+              "updatedAt": "2023-05-22T19:19:47Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOD79ejs5Vq5Ot",
+          "commit": {
+            "abbreviatedOid": "6d8ba3e"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-05-22T19:19:52Z",
+          "updatedAt": "2023-05-22T19:19:53Z",
+          "comments": [
+            {
+              "originalPosition": 70,
+              "body": "Reverted.",
+              "createdAt": "2023-05-22T19:19:52Z",
+              "updatedAt": "2023-05-22T19:19:53Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOD79ejs5Vq5yT",
+          "commit": {
+            "abbreviatedOid": "6d8ba3e"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-05-22T19:20:19Z",
+          "updatedAt": "2023-05-22T19:20:19Z",
+          "comments": [
+            {
+              "originalPosition": 85,
+              "body": "Fixed, and changed the domain separation tag in the function to match.",
+              "createdAt": "2023-05-22T19:20:19Z",
+              "updatedAt": "2023-05-22T19:20:19Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOD79ejs5Vq5-k",
+          "commit": {
+            "abbreviatedOid": "6d8ba3e"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-05-22T19:20:28Z",
+          "updatedAt": "2023-05-22T19:20:28Z",
+          "comments": [
+            {
+              "originalPosition": 53,
+              "body": "Fixed.",
+              "createdAt": "2023-05-22T19:20:28Z",
+              "updatedAt": "2023-05-22T19:20:28Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOD79ejs5Vq6FW",
+          "commit": {
+            "abbreviatedOid": "6d8ba3e"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-05-22T19:20:33Z",
+          "updatedAt": "2023-05-22T19:20:33Z",
+          "comments": [
+            {
+              "originalPosition": 50,
+              "body": "Sure, done.",
+              "createdAt": "2023-05-22T19:20:33Z",
+              "updatedAt": "2023-05-22T19:20:33Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOD79ejs5Vq6M5",
+          "commit": {
+            "abbreviatedOid": "6d8ba3e"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-05-22T19:20:39Z",
+          "updatedAt": "2023-05-22T19:20:39Z",
+          "comments": [
+            {
+              "originalPosition": 41,
+              "body": "Done.",
+              "createdAt": "2023-05-22T19:20:39Z",
+              "updatedAt": "2023-05-22T19:20:39Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOD79ejs5Vq6SR",
+          "commit": {
+            "abbreviatedOid": "6d8ba3e"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2023-05-22T19:20:44Z",
+          "updatedAt": "2023-05-22T19:20:44Z",
+          "comments": [
+            {
+              "originalPosition": 200,
+              "body": "Done.",
+              "createdAt": "2023-05-22T19:20:44Z",
+              "updatedAt": "2023-05-22T19:20:44Z"
+            }
+          ]
+        },
+        {
+          "id": "PRR_kwDOD79ejs5VrBu3",
+          "commit": {
+            "abbreviatedOid": "cea59e5"
+          },
+          "author": "kevinlewi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "Excellent, this looks good to me! I still haven't verified that test vector changes just yet, but I can do that in a follow-up and report back with any issues. Let's go ahead and land this. \r\n\r\nThank you for the quick turnaround!",
+          "createdAt": "2023-05-22T19:42:05Z",
+          "updatedAt": "2023-05-22T19:42:05Z",
+          "comments": []
         }
       ]
     }
