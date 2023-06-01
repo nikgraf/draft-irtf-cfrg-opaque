@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-05-23T01:20:38.966662+00:00",
+  "timestamp": "2023-06-01T01:59:40.986287+00:00",
   "repo": "cfrg/draft-irtf-cfrg-opaque",
   "labels": [
     {
@@ -8001,15 +8001,15 @@
       "id": "I_kwDOD79ejs5UBHrJ",
       "title": "recommend argon2i instead of scrypt in configurations",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-opaque/issues/376",
-      "state": "CLOSED",
+      "state": "OPEN",
       "author": "stef",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "i would like to reopen this issue: https://github.com/cfrg/draft-irtf-cfrg-opaque/pull/155#discussion_r586922995 since the reason for this is now solved, as there is now a rfc for this: https://www.rfc-editor.org/rfc/rfc9106.txt\r\n",
       "createdAt": "2022-10-14T16:20:01Z",
-      "updatedAt": "2022-12-08T20:55:23Z",
-      "closedAt": "2022-12-08T20:55:23Z",
+      "updatedAt": "2023-05-31T22:21:06Z",
+      "closedAt": null,
       "comments": [
         {
           "author": "stef",
@@ -8122,6 +8122,13 @@
           "body": "nah, go for it! thx! <3",
           "createdAt": "2022-12-08T12:10:23Z",
           "updatedAt": "2022-12-08T12:10:23Z"
+        },
+        {
+          "author": "kevinlewi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Re-opening this issue based on the topic in here: https://mailarchive.ietf.org/arch/msg/cfrg/7xBO1Yb8uYvb6-jPl7IKHbTqO8Q/\r\n\r\nI am OK with restoring the previous recommended configuration:\r\n\r\nP256-SHA256, HKDF-SHA-256, HMAC-SHA-256, SHA-256, scrypt(32768,8,1), P-256\r\n\r\n*in addition* to the Argon one. Note that we don't supply test vectors for the slow hashing function anyway, so this would effectively just be a one-line change.\r\n\r\n@stef, @jedisct1: wanted to get your thoughts on this as well, if you are against doing so. Thanks!",
+          "createdAt": "2023-05-31T22:21:06Z",
+          "updatedAt": "2023-05-31T22:21:06Z"
         }
       ]
     },
@@ -8826,6 +8833,38 @@
           "updatedAt": "2023-05-10T07:17:45Z"
         }
       ]
+    },
+    {
+      "number": 412,
+      "id": "I_kwDOD79ejs5nSrfc",
+      "title": "detecting password change",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-opaque/issues/412",
+      "state": "OPEN",
+      "author": "stef",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "In a new paper by Hao et all https://eprint.iacr.org/2023/768 in the 3rd argument for designing an alternative for OPAQUE is the following:\r\n\r\n> 3) After OPAQUE was selected by IETF, it was discovered that the original protocol reveals information to passive observers about whether the password has been recently changed during a login session [16]. Although this revelation may at first appear minor, it can be of significant concern in practice. Recall that the main motivation for augmented PAKE is to address the threat of \u201cserver com- promise\u201d. In principle, with the stolen credentials from a compromised server, the attacker is able to launch brute-force attacks to uncover plaintext passwords, but this is a time-consuming process. If a user diligently updates the password, her account on the server can remain secure. However, many users may be slow to update passwords. By passively monitoring the login sessions for all users, an attacker learns valuable information to identify those who have not changed the password and hence prioritizes the brute-force attack against those users. SPR-6a does not appear to have this problem.\r\n\r\ni looked up the reference, which is a paper by Hao https://eprint.iacr.org/2021/839 - i was unable to find this issue on a quick skimming. and i am not sure i can immediately pinpoint where such an information leak would be possible in the current draft during the login.\r\n\r\ni think others might stumble on this paper and wonder if and how this is considered in the draft, so it might be prudent ;) to address this issue, perhaps in the security considerations?",
+      "createdAt": "2023-05-30T20:25:25Z",
+      "updatedAt": "2023-05-30T20:25:25Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 414,
+      "id": "I_kwDOD79ejs5nWnwr",
+      "title": "Random Oracle Requirements for AKE",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-opaque/issues/414",
+      "state": "OPEN",
+      "author": "daxpedda",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "During https://github.com/cfrg/draft-irtf-cfrg-opaque/pull/404 a question came up on why a random oracle is required for the NIST and Ristretto ciphersuites but not for Curve25519: https://github.com/cfrg/draft-irtf-cfrg-opaque/pull/404#discussion_r1148436284.\r\n\r\nCurrently NIST and Ristretto use the OPRF `DeriveKeyPair` function: https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-voprf-21#name-deterministic-key-generatio. Which is more complicated and also compute intensive then simply using the NIST [ECDSA Key Pair Generation by Rejection Sampling](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-5.pdf#[{%22num%22%3A156%2C%22gen%22%3A0}%2C{%22name%22%3A%22XYZ%22}%2C70%2C409%2C0]).\r\n\r\nAs far as I can tell, if `HashToScalar`can be dropped in key generation for the AKE without any security concerns, it would be an overall gain for the specification; reducing complexity and computational requirements.",
+      "createdAt": "2023-05-31T11:20:16Z",
+      "updatedAt": "2023-05-31T11:21:26Z",
+      "closedAt": null,
+      "comments": []
     }
   ],
   "pulls": [
@@ -32573,6 +32612,32 @@
           "comments": []
         }
       ]
+    },
+    {
+      "number": 413,
+      "id": "PR_kwDOD79ejs5Rugu7",
+      "title": "POC Makefile: Don't re-setup every time",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-opaque/pull/413",
+      "state": "OPEN",
+      "author": "jamesw1892",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Having `setup` as a prerequisite of `pyfiles` (which itself is a prerequisite of `test` and `vectors`) means everytime you do `make test`, `setup` is run too. This means the files from submodules are copied and then have to be re-parsed by sage which really slows everything down.\r\n\r\nAny future additions to the makefile will also likely have `pyfiles` as a prerequisite so have this problem too. This is the case for my fork and is causing problems.\r\n\r\nThe downside is that `make setup` must be run the first time so that the files are copied, but this was the case before the commit on 14th March anyway.",
+      "createdAt": "2023-05-30T21:15:35Z",
+      "updatedAt": "2023-05-30T21:16:07Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-opaque",
+      "baseRefName": "master",
+      "baseRefOid": "727b9acb908dce296e15bc14a53a7d04ba9604d0",
+      "headRepository": "jamesw1892/OPAQUE",
+      "headRefName": "patch-1",
+      "headRefOid": "b08951533834ba98c820ab591f78ee016f776fba",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
