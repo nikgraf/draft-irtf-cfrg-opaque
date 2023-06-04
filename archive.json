@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-06-01T01:59:40.986287+00:00",
+  "timestamp": "2023-06-04T01:55:46.040844+00:00",
   "repo": "cfrg/draft-irtf-cfrg-opaque",
   "labels": [
     {
@@ -8846,9 +8846,52 @@
       "labels": [],
       "body": "In a new paper by Hao et all https://eprint.iacr.org/2023/768 in the 3rd argument for designing an alternative for OPAQUE is the following:\r\n\r\n> 3) After OPAQUE was selected by IETF, it was discovered that the original protocol reveals information to passive observers about whether the password has been recently changed during a login session [16]. Although this revelation may at first appear minor, it can be of significant concern in practice. Recall that the main motivation for augmented PAKE is to address the threat of \u201cserver com- promise\u201d. In principle, with the stolen credentials from a compromised server, the attacker is able to launch brute-force attacks to uncover plaintext passwords, but this is a time-consuming process. If a user diligently updates the password, her account on the server can remain secure. However, many users may be slow to update passwords. By passively monitoring the login sessions for all users, an attacker learns valuable information to identify those who have not changed the password and hence prioritizes the brute-force attack against those users. SPR-6a does not appear to have this problem.\r\n\r\ni looked up the reference, which is a paper by Hao https://eprint.iacr.org/2021/839 - i was unable to find this issue on a quick skimming. and i am not sure i can immediately pinpoint where such an information leak would be possible in the current draft during the login.\r\n\r\ni think others might stumble on this paper and wonder if and how this is considered in the draft, so it might be prudent ;) to address this issue, perhaps in the security considerations?",
       "createdAt": "2023-05-30T20:25:25Z",
-      "updatedAt": "2023-05-30T20:25:25Z",
+      "updatedAt": "2023-06-01T21:40:55Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "kevinlewi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "We call this attack \"client enumeration\", and it was indeed missing from the original protocol, but since then we have addressed it: see related issues #183, #210 for instance.\r\n\r\nWe also have the subsection on Client Enumeration in the draft, which is already included within the Security Considerations section. So I think we've more or less addressed it, falling short of explicitly making a reference to the paper in the draft.\r\n\r\nWill let others chime in with their thoughts, but I'd be in favor of closing this issue without modification to the current draft.\r\n\r\n",
+          "createdAt": "2023-06-01T06:20:42Z",
+          "updatedAt": "2023-06-01T06:20:42Z"
+        },
+        {
+          "author": "stef",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "well, client enumeration is an attack detecting the existence of users, according to the quote the infoleak leaks something different it leaks if the users changed their password.",
+          "createdAt": "2023-06-01T11:51:44Z",
+          "updatedAt": "2023-06-01T11:51:44Z"
+        },
+        {
+          "author": "kevinlewi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "We define \"client enumeration\" differently. From the doc:\r\n\r\nClient enumeration refers to attacks where the attacker tries to learn extra information about the behavior of clients that have registered with the server. There are two types of attacks we consider:\r\n- An attacker tries to learn whether a given client identity is registered with a server, and\r\n- An attacker tries to learn whether a given client identity has recently completed registration, re-registered (e.g. after a password change), or changed its identity.\r\n\r\nI believe the second bullet point is exactly referring to what was quoted, no?",
+          "createdAt": "2023-06-01T20:25:32Z",
+          "updatedAt": "2023-06-01T20:25:32Z"
+        },
+        {
+          "author": "stef",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "hmm, ok. if the doc defines it like this. it's a bit confusing to deviate from the normal interpretation. but i guess it's ok. maybe put a footnote to the paper in the issue that the spec as is does not have the problem that is listed in that paper? just to make it explicit.",
+          "createdAt": "2023-06-01T20:36:48Z",
+          "updatedAt": "2023-06-01T20:37:06Z"
+        },
+        {
+          "author": "kevinlewi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Right, so in regards to adding a footnote with a link to the paper, I am not sure if we should essentially set the precedent that any paper in the future which claims a weakness in OPAQUE is something that we should mention that we have addressed in the spec.\r\n\r\nI'm in favor of not mentioning the paper, but will also let others chime in. @chris-wood , @bytemare ",
+          "createdAt": "2023-06-01T20:50:03Z",
+          "updatedAt": "2023-06-01T20:50:03Z"
+        },
+        {
+          "author": "stef",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "hmmm, you do have a good point with this \"not making a precedent\". i agree.",
+          "createdAt": "2023-06-01T21:40:55Z",
+          "updatedAt": "2023-06-01T21:40:55Z"
+        }
+      ]
     },
     {
       "number": 414,
@@ -8862,9 +8905,17 @@
       "labels": [],
       "body": "During https://github.com/cfrg/draft-irtf-cfrg-opaque/pull/404 a question came up on why a random oracle is required for the NIST and Ristretto ciphersuites but not for Curve25519: https://github.com/cfrg/draft-irtf-cfrg-opaque/pull/404#discussion_r1148436284.\r\n\r\nCurrently NIST and Ristretto use the OPRF `DeriveKeyPair` function: https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-voprf-21#name-deterministic-key-generatio. Which is more complicated and also compute intensive then simply using the NIST [ECDSA Key Pair Generation by Rejection Sampling](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-5.pdf#[{%22num%22%3A156%2C%22gen%22%3A0}%2C{%22name%22%3A%22XYZ%22}%2C70%2C409%2C0]).\r\n\r\nAs far as I can tell, if `HashToScalar`can be dropped in key generation for the AKE without any security concerns, it would be an overall gain for the specification; reducing complexity and computational requirements.",
       "createdAt": "2023-05-31T11:20:16Z",
-      "updatedAt": "2023-05-31T11:21:26Z",
+      "updatedAt": "2023-06-01T06:35:34Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "kevinlewi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@chris-wood ^",
+          "createdAt": "2023-06-01T06:35:34Z",
+          "updatedAt": "2023-06-01T06:35:34Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -32625,7 +32676,7 @@
       "labels": [],
       "body": "Having `setup` as a prerequisite of `pyfiles` (which itself is a prerequisite of `test` and `vectors`) means everytime you do `make test`, `setup` is run too. This means the files from submodules are copied and then have to be re-parsed by sage which really slows everything down.\r\n\r\nAny future additions to the makefile will also likely have `pyfiles` as a prerequisite so have this problem too. This is the case for my fork and is causing problems.\r\n\r\nThe downside is that `make setup` must be run the first time so that the files are copied, but this was the case before the commit on 14th March anyway.",
       "createdAt": "2023-05-30T21:15:35Z",
-      "updatedAt": "2023-05-30T21:16:07Z",
+      "updatedAt": "2023-06-01T20:26:22Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-opaque",
       "baseRefName": "master",
       "baseRefOid": "727b9acb908dce296e15bc14a53a7d04ba9604d0",
@@ -32637,7 +32688,21 @@
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "PRR_kwDOD79ejs5WzK8g",
+          "commit": {
+            "abbreviatedOid": "b089515"
+          },
+          "author": "kevinlewi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM!",
+          "createdAt": "2023-06-01T20:26:22Z",
+          "updatedAt": "2023-06-01T20:26:22Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
