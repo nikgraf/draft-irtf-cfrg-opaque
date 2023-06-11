@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-06-04T01:55:46.040844+00:00",
+  "timestamp": "2023-06-11T01:50:15.347677+00:00",
   "repo": "cfrg/draft-irtf-cfrg-opaque",
   "labels": [
     {
@@ -8001,15 +8001,15 @@
       "id": "I_kwDOD79ejs5UBHrJ",
       "title": "recommend argon2i instead of scrypt in configurations",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-opaque/issues/376",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "stef",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "i would like to reopen this issue: https://github.com/cfrg/draft-irtf-cfrg-opaque/pull/155#discussion_r586922995 since the reason for this is now solved, as there is now a rfc for this: https://www.rfc-editor.org/rfc/rfc9106.txt\r\n",
       "createdAt": "2022-10-14T16:20:01Z",
-      "updatedAt": "2023-05-31T22:21:06Z",
-      "closedAt": null,
+      "updatedAt": "2023-06-08T21:32:56Z",
+      "closedAt": "2023-06-08T21:32:56Z",
       "comments": [
         {
           "author": "stef",
@@ -8129,6 +8129,13 @@
           "body": "Re-opening this issue based on the topic in here: https://mailarchive.ietf.org/arch/msg/cfrg/7xBO1Yb8uYvb6-jPl7IKHbTqO8Q/\r\n\r\nI am OK with restoring the previous recommended configuration:\r\n\r\nP256-SHA256, HKDF-SHA-256, HMAC-SHA-256, SHA-256, scrypt(32768,8,1), P-256\r\n\r\n*in addition* to the Argon one. Note that we don't supply test vectors for the slow hashing function anyway, so this would effectively just be a one-line change.\r\n\r\n@stef, @jedisct1: wanted to get your thoughts on this as well, if you are against doing so. Thanks!",
           "createdAt": "2023-05-31T22:21:06Z",
           "updatedAt": "2023-05-31T22:21:06Z"
+        },
+        {
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Closing as resolved.",
+          "createdAt": "2023-06-08T21:32:56Z",
+          "updatedAt": "2023-06-08T21:32:56Z"
         }
       ]
     },
@@ -8905,7 +8912,7 @@
       "labels": [],
       "body": "During https://github.com/cfrg/draft-irtf-cfrg-opaque/pull/404 a question came up on why a random oracle is required for the NIST and Ristretto ciphersuites but not for Curve25519: https://github.com/cfrg/draft-irtf-cfrg-opaque/pull/404#discussion_r1148436284.\r\n\r\nCurrently NIST and Ristretto use the OPRF `DeriveKeyPair` function: https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-voprf-21#name-deterministic-key-generatio. Which is more complicated and also compute intensive then simply using the NIST [ECDSA Key Pair Generation by Rejection Sampling](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-5.pdf#[{%22num%22%3A156%2C%22gen%22%3A0}%2C{%22name%22%3A%22XYZ%22}%2C70%2C409%2C0]).\r\n\r\nAs far as I can tell, if `HashToScalar`can be dropped in key generation for the AKE without any security concerns, it would be an overall gain for the specification; reducing complexity and computational requirements.",
       "createdAt": "2023-05-31T11:20:16Z",
-      "updatedAt": "2023-06-01T06:35:34Z",
+      "updatedAt": "2023-06-09T12:33:25Z",
       "closedAt": null,
       "comments": [
         {
@@ -8914,6 +8921,13 @@
           "body": "@chris-wood ^",
           "createdAt": "2023-06-01T06:35:34Z",
           "updatedAt": "2023-06-01T06:35:34Z"
+        },
+        {
+          "author": "OR13",
+          "authorAssociation": "NONE",
+          "body": "I don't think you need a kdf for curve25519, but how people get to the seed matters.\n\nYou might look at BIP44 and BIP39 and see if there is anything relevant.",
+          "createdAt": "2023-06-09T12:33:25Z",
+          "updatedAt": "2023-06-09T12:33:25Z"
         }
       ]
     }
@@ -32669,24 +32683,26 @@
       "id": "PR_kwDOD79ejs5Rugu7",
       "title": "POC Makefile: Don't re-setup every time",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-opaque/pull/413",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "jamesw1892",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "Having `setup` as a prerequisite of `pyfiles` (which itself is a prerequisite of `test` and `vectors`) means everytime you do `make test`, `setup` is run too. This means the files from submodules are copied and then have to be re-parsed by sage which really slows everything down.\r\n\r\nAny future additions to the makefile will also likely have `pyfiles` as a prerequisite so have this problem too. This is the case for my fork and is causing problems.\r\n\r\nThe downside is that `make setup` must be run the first time so that the files are copied, but this was the case before the commit on 14th March anyway.",
       "createdAt": "2023-05-30T21:15:35Z",
-      "updatedAt": "2023-06-01T20:26:22Z",
+      "updatedAt": "2023-06-08T21:32:39Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-opaque",
       "baseRefName": "master",
       "baseRefOid": "727b9acb908dce296e15bc14a53a7d04ba9604d0",
       "headRepository": "jamesw1892/OPAQUE",
       "headRefName": "patch-1",
       "headRefOid": "b08951533834ba98c820ab591f78ee016f776fba",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2023-06-08T21:32:39Z",
+      "mergedAt": "2023-06-08T21:32:39Z",
+      "mergedBy": "chris-wood",
+      "mergeCommit": {
+        "oid": "9f08701757f537501555c59067c9bcdd0237f7d1"
+      },
       "comments": [],
       "reviews": [
         {
@@ -32701,6 +32717,55 @@
           "createdAt": "2023-06-01T20:26:22Z",
           "updatedAt": "2023-06-01T20:26:22Z",
           "comments": []
+        }
+      ]
+    },
+    {
+      "number": 415,
+      "id": "PR_kwDOD79ejs5SjmIn",
+      "title": "Restoring scrypt as a recommended configuration",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-opaque/pull/415",
+      "state": "MERGED",
+      "author": "kevinlewi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Addresses https://github.com/cfrg/draft-irtf-cfrg-opaque/issues/376",
+      "createdAt": "2023-06-08T20:18:21Z",
+      "updatedAt": "2023-06-08T21:32:22Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-opaque",
+      "baseRefName": "master",
+      "baseRefOid": "727b9acb908dce296e15bc14a53a7d04ba9604d0",
+      "headRepository": "kevinlewi/draft-irtf-cfrg-opaque",
+      "headRefName": "recommend_scrypt",
+      "headRefOid": "a4e6bdde3b7b8555f32a1f670cba6ee46e228b43",
+      "closedAt": "2023-06-08T21:32:22Z",
+      "mergedAt": "2023-06-08T21:32:21Z",
+      "mergedBy": "chris-wood",
+      "mergeCommit": {
+        "oid": "e9cfe5ff07d46b9707ff2efa302242f6bed3b817"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDOD79ejs5Xqn23",
+          "commit": {
+            "abbreviatedOid": "b0adec3"
+          },
+          "author": "chris-wood",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2023-06-08T21:32:00Z",
+          "updatedAt": "2023-06-08T21:32:10Z",
+          "comments": [
+            {
+              "originalPosition": 4,
+              "body": "```suggestion\r\n- P256-SHA256, HKDF-SHA-256, HMAC-SHA-256, SHA-256, scrypt(N = 32768, r = 8, p = 1), P-256\r\n```",
+              "createdAt": "2023-06-08T21:32:00Z",
+              "updatedAt": "2023-06-08T21:32:10Z"
+            }
+          ]
         }
       ]
     }
