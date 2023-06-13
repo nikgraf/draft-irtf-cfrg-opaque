@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2023-06-11T01:50:15.347677+00:00",
+  "timestamp": "2023-06-13T01:37:29.865407+00:00",
   "repo": "cfrg/draft-irtf-cfrg-opaque",
   "labels": [
     {
@@ -8846,15 +8846,15 @@
       "id": "I_kwDOD79ejs5nSrfc",
       "title": "detecting password change",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-opaque/issues/412",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "stef",
       "authorAssociation": "CONTRIBUTOR",
       "assignees": [],
       "labels": [],
       "body": "In a new paper by Hao et all https://eprint.iacr.org/2023/768 in the 3rd argument for designing an alternative for OPAQUE is the following:\r\n\r\n> 3) After OPAQUE was selected by IETF, it was discovered that the original protocol reveals information to passive observers about whether the password has been recently changed during a login session [16]. Although this revelation may at first appear minor, it can be of significant concern in practice. Recall that the main motivation for augmented PAKE is to address the threat of \u201cserver com- promise\u201d. In principle, with the stolen credentials from a compromised server, the attacker is able to launch brute-force attacks to uncover plaintext passwords, but this is a time-consuming process. If a user diligently updates the password, her account on the server can remain secure. However, many users may be slow to update passwords. By passively monitoring the login sessions for all users, an attacker learns valuable information to identify those who have not changed the password and hence prioritizes the brute-force attack against those users. SPR-6a does not appear to have this problem.\r\n\r\ni looked up the reference, which is a paper by Hao https://eprint.iacr.org/2021/839 - i was unable to find this issue on a quick skimming. and i am not sure i can immediately pinpoint where such an information leak would be possible in the current draft during the login.\r\n\r\ni think others might stumble on this paper and wonder if and how this is considered in the draft, so it might be prudent ;) to address this issue, perhaps in the security considerations?",
       "createdAt": "2023-05-30T20:25:25Z",
-      "updatedAt": "2023-06-01T21:40:55Z",
-      "closedAt": null,
+      "updatedAt": "2023-06-11T02:30:13Z",
+      "closedAt": "2023-06-11T02:30:13Z",
       "comments": [
         {
           "author": "kevinlewi",
